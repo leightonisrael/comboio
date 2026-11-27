@@ -49,4 +49,4 @@ Se esta política mudar, a nova versão será publicada nesta mesma página, com
 
 ## Contato
 
-Dúvidas: abra uma questão em https://github.com/leightonisrael/intercomunicador-v10/issues
+Dúvidas: abra uma questão em https://github.com/leightonisrael/comboio/issues

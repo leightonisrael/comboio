@@ -62,7 +62,7 @@ intercomunicador,moto,capacete,intercom,piloto,garupa,offline,walkie,talkie,blue
 **Categoria:** Comunicação (alternativa: Navegação/Viagem não se aplica).
 
 **Política de privacidade (URL):**
-https://github.com/leightonisrael/intercomunicador-v10/blob/main/docs/privacidade.md
+https://github.com/leightonisrael/comboio/blob/main/docs/privacidade.md
 
 **Classificação etária:** Livre. O app não tem conteúdo; os usuários só conversam com quem está na mesma rede Wi-Fi e conhece o PIN.
 

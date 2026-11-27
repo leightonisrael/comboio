@@ -4,7 +4,7 @@
 
 Intercomunicador por voz para motociclistas. Funciona sem internet e sem sinal de celular: cada piloto usa o próprio celular com o próprio capacete Bluetooth, e os celulares conversam por Wi-Fi local.
 
-**Site:** https://leightonisrael.github.io/intercomunicador-v10/
+**Site:** https://leightonisrael.github.io/comboio/
 
 <p align="center">
   <img src="store/android/1-sala.png" width="200" alt="Sala com um piloto falando">
