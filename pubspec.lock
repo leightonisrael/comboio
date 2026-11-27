@@ -176,10 +176,9 @@ packages:
   flutter_webrtc:
     dependency: "direct main"
     description:
-      name: flutter_webrtc
-      sha256: be21e23bface65e18ed01ee912c6f2d5619f3fcee630755a2d76a2c22509d1af
-      url: "https://pub.dev"
-    source: hosted
+      path: "third_party/flutter_webrtc"
+      relative: true
+    source: path
     version: "1.7.0"
   hooks:
     dependency: transitive

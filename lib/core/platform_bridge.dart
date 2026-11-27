@@ -44,6 +44,11 @@ class PlatformBridge {
         allowWifiLock: true,
       ),
     );
+    // Wi-Fi sem internet (roteador de outro celular): sem isto o Android
+    // manda o tráfego do app pelos dados móveis.
+    if (Platform.isAndroid) {
+      _channel.invokeMethod<void>('bindWifi').catchError((_) {});
+    }
   }
 
   /// Pede as permissões. Só o microfone é obrigatório.

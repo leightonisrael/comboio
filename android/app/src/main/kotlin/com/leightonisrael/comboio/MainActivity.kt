@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.Uri
 import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
@@ -17,6 +21,10 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "getRoute" -> result.success(currentRoute())
+                    "bindWifi" -> {
+                        bindWifi()
+                        result.success(null)
+                    }
                     "openSettings" -> {
                         openSettings(call.argument<String>("kind") ?: "app")
                         result.success(null)
@@ -24,6 +32,48 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    private var wifiCallback: ConnectivityManager.NetworkCallback? = null
+
+    /**
+     * Prende o trafego do app ao Wi-Fi enquanto ele existir. Em um Wi-Fi sem
+     * internet (o roteador de outro celular) o Android manda o trafego pelos
+     * dados moveis, e os outros celulares da sala ficam inalcancaveis.
+     */
+    private fun bindWifi() {
+        if (wifiCallback != null) return
+        try {
+            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val request = NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
+            val callback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    cm.bindProcessToNetwork(network)
+                }
+
+                override fun onLost(network: Network) {
+                    if (cm.boundNetworkForProcess == network) cm.bindProcessToNetwork(null)
+                }
+            }
+            cm.requestNetwork(request, callback)
+            wifiCallback = callback
+        } catch (_: Exception) {
+            // Sem a permissao ou sem Wi-Fi: segue com a rede padrao.
+        }
+    }
+
+    override fun onDestroy() {
+        try {
+            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            wifiCallback?.let { cm.unregisterNetworkCallback(it) }
+            cm.bindProcessToNetwork(null)
+        } catch (_: Exception) {
+        }
+        wifiCallback = null
+        super.onDestroy()
     }
 
     /** Procura um headset Bluetooth capaz de voz (HFP/SCO ou LE Audio). */
