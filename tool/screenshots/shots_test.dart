@@ -269,6 +269,8 @@ void main() {
   // (pasta, tamanho lógico, densidade) -> App Store 6,9" e Google Play (2:1).
   const targets = [
     ('store/ios', Size(440, 956), 3.0), // 1320 x 2868
+    ('store/ios-6.3', Size(402, 874), 3.0), // 1206 x 2622
+    ('store/ipad-13', Size(1032, 1376), 2.0), // 2064 x 2752
     ('store/android', Size(432, 864), 2.5), // 1080 x 2160
   ];
 
