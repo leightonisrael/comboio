@@ -218,7 +218,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ]),
             const SizedBox(height: Sp.md),
             Text(
-              'Comboio 0.1.0',
+              'Comboio 0.1.1',
               textAlign: TextAlign.center,
               style: Ty.label.copyWith(color: p.textDim),
             ),

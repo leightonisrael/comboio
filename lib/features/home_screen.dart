@@ -11,7 +11,11 @@ import 'pin_pad.dart';
 import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.previewRooms});
+
+  /// Salas fixas para pré-visualização (capturas de tela). Com isto definido,
+  /// a tela não procura na rede.
+  final List<RoomAd>? previewRooms;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -28,6 +32,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    final preview = widget.previewRooms;
+    if (preview != null) {
+      _rooms = preview;
+      _scannedOnce = true;
+      return;
+    }
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refresh();

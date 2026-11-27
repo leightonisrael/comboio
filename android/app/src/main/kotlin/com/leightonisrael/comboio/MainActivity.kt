@@ -1,4 +1,4 @@
-package br.com.comboio.comboio
+package com.leightonisrael.comboio
 
 import android.content.Context
 import android.content.Intent

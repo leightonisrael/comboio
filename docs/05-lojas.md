@@ -4,7 +4,7 @@ Textos e respostas prontos para o Google Play Console e o App Store Connect. Tud
 
 ## Antes de publicar
 
-1. **Identificador do app.** Hoje é `br.com.comboio.comboio`. Depois de publicado, **não dá para trocar**, nem no Google Play nem na App Store. Use um domínio que seja seu.
+1. **Identificador do app.** Hoje é `com.leightonisrael.comboio`. Depois de publicado, **não dá para trocar**, nem no Google Play nem na App Store. Use um domínio que seja seu.
 2. **Nome.** Na App Store o nome precisa ser único no mundo. Se "Comboio" estiver ocupado, use uma variação, como "Comboio Intercom".
 3. **Teste em aparelho.** As duas lojas revisam o app funcionando. Enviar para revisão antes de testar em dois celulares é pedir rejeição. Use primeiro as trilhas de teste (abaixo), que não passam por revisão completa.
 
@@ -118,4 +118,8 @@ As duas lojas exigem capturas reais do app. Tamanhos mínimos:
 | Google Play | 2 a 8 capturas de celular, mais ícone 512×512 e imagem de destaque 1024×500 |
 | App Store | Capturas de iPhone 6,9" (1320×2868) ou 6,5" |
 
-Telas a capturar: Home com uma sala listada, Sala ativa com piloto falando, Sala em modo PTT, Como conectar, Configurações.
+As capturas, o ícone 512×512 e a imagem de destaque já estão prontos na pasta `store/` (`store/android`, `store/ios`). Para gerar de novo depois de mudar o visual:
+
+```
+C:srclutterinlutter test tool/screenshots/shots_test.dart
+```

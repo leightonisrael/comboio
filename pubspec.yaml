@@ -1,7 +1,7 @@
 name: comboio
 description: Intercomunicador por voz para motociclistas, sem internet.
 publish_to: none
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ^3.10.0
@@ -22,6 +22,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  image: ^4.13.1
 
 flutter:
   uses-material-design: true

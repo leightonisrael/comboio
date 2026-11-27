@@ -15,7 +15,7 @@ if (keyPropsFile.exists()) {
 }
 
 android {
-    namespace = "br.com.comboio.comboio"
+    namespace = "com.leightonisrael.comboio"
     // permission_handler exige compilar contra a API 37 ou mais nova.
     compileSdk = 37
     ndkVersion = flutter.ndkVersion
@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "br.com.comboio.comboio"
+        applicationId = "com.leightonisrael.comboio"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

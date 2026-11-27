@@ -205,4 +205,4 @@ As pastas `android/` e `ios/` estão versionadas. O Flutter gera a pasta `ios/` 
 
 ## Identificador do app
 
-O identificador atual é `br.com.comboio.comboio` (Android `applicationId` e iOS bundle id). Serve para sideload. Antes de publicar em loja ou no TestFlight, troque por um domínio seu em `android/app/build.gradle.kts` e em `ios/Runner.xcodeproj/project.pbxproj` (`PRODUCT_BUNDLE_IDENTIFIER`).
+O identificador atual é `com.leightonisrael.comboio` (Android `applicationId` e iOS bundle id). Serve para sideload. Antes de publicar em loja ou no TestFlight, troque por um domínio seu em `android/app/build.gradle.kts` e em `ios/Runner.xcodeproj/project.pbxproj` (`PRODUCT_BUNDLE_IDENTIFIER`).

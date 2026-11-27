@@ -174,10 +174,13 @@ class _LinkDiagram extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              label,
-              maxLines: 1,
-              style: Ty.label.copyWith(color: color, fontSize: 12),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                style: Ty.label.copyWith(color: color, fontSize: 12),
+              ),
             ),
             const SizedBox(height: 2),
             Container(height: 3, color: color),
