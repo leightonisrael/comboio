@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.className="js"</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Comboio — intercomunicador de moto sem internet</title>
 <meta name="description" content="Converse de capacete a capacete usando o celular e o headset Bluetooth que você já tem. Funciona sem internet e sem sinal de operadora, pelo Wi-Fi ou hotspot dos celulares.">
@@ -53,7 +54,7 @@ nav a:hover{color:var(--text)}
 .btn.ghost{background:var(--high);color:var(--text);border:1px solid var(--border)}
 .btn:hover{filter:brightness(1.1)}
 .note{font-size:14px;margin-top:12px}
-.phone{justify-self:center;width:min(300px,78vw);border-radius:34px;border:6px solid var(--high);box-shadow:0 0 0 1px var(--border),0 30px 80px rgba(255,138,0,.12);overflow:hidden}
+.phone{border-radius:34px;border:6px solid var(--high);box-shadow:0 0 0 1px var(--border),0 30px 80px rgba(255,138,0,.12);overflow:hidden}
 .phone img{display:block;width:100%;height:auto}
 
 /* diagrama */
@@ -104,7 +105,65 @@ footer a{color:var(--dim)}
   section{padding:52px 0}
 }
 @media (max-width:520px){.steps{grid-template-columns:1fr}nav a.opt{display:none}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ---------- animações ---------- */
+/* hero: ondas saindo do celular e anel de "falando" */
+.stage{position:relative;justify-self:center;width:min(300px,78vw)}
+.stage .phone{position:relative;z-index:1;width:100%;background:var(--bg)}
+.stage .wave{position:absolute;left:50%;top:50%;width:100%;aspect-ratio:1;border-radius:50%;border:2px solid var(--accent);transform:translate(-50%,-50%) scale(.6);opacity:0;animation:wave 4.5s cubic-bezier(.2,.6,.3,1) infinite}
+.stage .wave:nth-child(2){animation-delay:1.5s}
+.stage .wave:nth-child(3){animation-delay:3s}
+@keyframes wave{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}15%{opacity:.5}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
+.talk{position:absolute;z-index:2;left:50%;top:33.2%;width:46%;aspect-ratio:1;border-radius:50%;border:3px solid var(--live);transform:translate(-50%,-50%);opacity:0;animation:talk 1.8s ease-out infinite;pointer-events:none}
+.talk.b{animation-delay:.9s}
+@keyframes talk{0%{transform:translate(-50%,-50%) scale(1);opacity:.7}100%{transform:translate(-50%,-50%) scale(1.45);opacity:0}}
+.hero h1,.hero .lead,.hero .cta,.hero .note,.hero .eyebrow{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.hero h1{animation-delay:.08s}.hero .lead{animation-delay:.18s}.hero .cta{animation-delay:.28s}.hero .note{animation-delay:.36s}
+.stage{animation:rise .9s cubic-bezier(.2,.7,.2,1) .2s both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* diagrama: a voz vai de A para B e depois de B para A (ciclo de 8 s) */
+.wire b{position:relative;overflow:hidden}
+.wire b::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,var(--dim) 0 10px,transparent 10px 28px);background-size:28px 100%;animation:flow 8s linear infinite}
+.wire.wifi b::after{background-image:repeating-linear-gradient(90deg,#fff 0 10px,transparent 10px 28px)}
+@keyframes flow{0%{background-position:0 0}48%{background-position:224px 0}52%{background-position:224px 0}100%{background-position:0 0}}
+.node.rider{animation:speakA 8s linear infinite}
+.node.rider.b{animation-name:speakB}
+@keyframes speakA{0%,46%{border-color:var(--live);box-shadow:0 0 0 1px var(--live),0 0 28px rgba(46,232,107,.25)}52%,96%{border-color:var(--border);box-shadow:none}100%{border-color:var(--live);box-shadow:0 0 0 1px var(--live),0 0 28px rgba(46,232,107,.25)}}
+@keyframes speakB{0%,46%{border-color:var(--border);box-shadow:none}52%,96%{border-color:var(--live);box-shadow:0 0 0 1px var(--live),0 0 28px rgba(46,232,107,.25)}100%{border-color:var(--border);box-shadow:none}}
+.eq{display:flex;justify-content:center;align-items:center;gap:4px;height:22px;margin-bottom:8px;animation:eqA 8s linear infinite}
+.eq i{width:4px;height:100%;border-radius:2px;background:#3DA9FF;transform:scaleY(.2);animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.2s}.eq i:nth-child(3){animation-delay:-.45s}.eq i:nth-child(4){animation-delay:-.1s}.eq i:nth-child(5){animation-delay:-.6s}
+@keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+.rider.b .eq{animation-name:eqB}
+@keyframes eqA{0%,46%{opacity:1;transform:none}52%,96%{opacity:.35;transform:scaleY(.2)}100%{opacity:1;transform:none}}
+@keyframes eqB{0%,46%{opacity:.35;transform:scaleY(.2)}52%,96%{opacity:1;transform:none}100%{opacity:.35;transform:scaleY(.2)}}
+.state{display:grid;font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.1em;margin-top:6px}
+.state span{grid-area:1/1}
+.state .on{color:var(--live);animation:stA 8s linear infinite}
+.state .off{color:var(--dim);animation:stB 8s linear infinite}
+.rider.b .state .on{animation-name:stB}
+.rider.b .state .off{animation-name:stA}
+@keyframes stA{0%,46%{opacity:1}52%,96%{opacity:0}100%{opacity:1}}
+@keyframes stB{0%,46%{opacity:0}52%,96%{opacity:1}100%{opacity:0}}
+
+/* entrada das seções ao rolar (só com JavaScript ativo) */
+.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0)*70ms)}
+.js .reveal.in{opacity:1;transform:none}
+
+@keyframes flowv{0%{background-position:0 0}48%{background-position:0 112px}52%{background-position:0 112px}100%{background-position:0 0}}
+@media (max-width:860px){
+  .wire b::after{background:repeating-linear-gradient(180deg,var(--dim) 0 6px,transparent 6px 14px);background-size:100% 14px;animation-name:flowv}
+  .wire.wifi b::after{background-image:repeating-linear-gradient(180deg,#fff 0 6px,transparent 6px 14px)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .stage .wave,.talk{display:none}
+  .js .reveal{opacity:1;transform:none}
+  .rider.a{border-color:var(--live)}
+  .rider.b .state .on,.rider.a .state .off{opacity:0}
+}
 </style>
 </head>
 <body>
@@ -131,7 +190,11 @@ footer a{color:var(--dim)}
       </div>
       <p class="note">Gratuito, sem cadastro e sem anúncios. A versão 0.1.3 está em análise nas duas lojas; os links passam a funcionar assim que for aprovada.</p>
     </div>
-    <div class="phone"><img src="img/1-sala.png" width="1080" height="2160" alt="Tela da sala do Comboio mostrando o piloto Léo falando, o volume e o botão de silenciar"></div>
+    <div class="stage">
+      <span class="wave" aria-hidden="true"></span><span class="wave" aria-hidden="true"></span><span class="wave" aria-hidden="true"></span>
+      <div class="phone"><img src="img/1-sala.png" width="1080" height="2160" alt="Tela da sala do Comboio mostrando o piloto Léo falando, o volume e o botão de silenciar"></div>
+      <span class="talk" aria-hidden="true"></span><span class="talk b" aria-hidden="true"></span>
+    </div>
   </div>
 </div>
 
@@ -141,13 +204,13 @@ footer a{color:var(--dim)}
     <h2>Seu capacete já tem tudo o que precisa</h2>
     <p>Serve qualquer headset Bluetooth de capacete, de qualquer marca, inclusive os genéricos que não têm intercom entre unidades. Basta ele funcionar para ligações telefônicas.</p>
     <div class="link" role="img" aria-label="Capacete A ligado por Bluetooth ao celular A; celular A ligado por Wi-Fi local ao celular B; celular B ligado por Bluetooth ao capacete B">
-      <div class="node">Capacete A<small>seu headset</small></div>
+      <div class="node rider a"><div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>Capacete A<small>seu headset</small><div class="state" aria-hidden="true"><span class="on">FALANDO</span><span class="off">OUVINDO</span></div></div>
       <div class="wire"><b></b>Bluetooth</div>
       <div class="node">Celular A<small>cria a sala</small></div>
       <div class="wire wifi"><b></b>Wi-Fi local</div>
       <div class="node">Celular B<small>entra na sala</small></div>
       <div class="wire"><b></b>Bluetooth</div>
-      <div class="node">Capacete B<small>headset do amigo</small></div>
+      <div class="node rider b"><div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>Capacete B<small>headset do amigo</small><div class="state" aria-hidden="true"><span class="on">FALANDO</span><span class="off">OUVINDO</span></div></div>
     </div>
   </div>
 </section>
@@ -226,5 +289,18 @@ footer a{color:var(--dim)}
   </div>
 </footer>
 
+<script>
+(function(){
+  var els=[].slice.call(document.querySelectorAll('section .eyebrow, section h2, section .wrap > p, section .wrap > h3, .link, .steps li, .card, .shots figure'));
+  els.forEach(function(e){
+    e.classList.add('reveal');
+    if(e.matches('.steps li,.card,.shots figure'))e.style.setProperty('--i',[].indexOf.call(e.parentNode.children,e));
+  });
+  var rs=[].slice.call(document.querySelectorAll('.reveal'));
+  if(!('IntersectionObserver' in window)){rs.forEach(function(e){e.classList.add('in')});return;}
+  var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}})},{rootMargin:'0px 0px -8% 0px'});
+  rs.forEach(function(e){io.observe(e)});
+})();
+</script>
 </body>
 </html>
