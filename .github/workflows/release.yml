@@ -49,6 +49,8 @@ jobs:
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then
             echo "::warning::Segredos de assinatura ausentes. APK assinado com chave de depuração."
+            # Nome diferente para nunca substituir o APK assinado com a chave oficial.
+            echo "SUFFIX=-chave-de-teste" >> "$GITHUB_ENV"
             exit 0
           fi
           echo "$KEYSTORE_BASE64" | base64 --decode > android/app/comboio-release.jks
@@ -63,10 +65,13 @@ jobs:
       # e tem um terço do tamanho do APK universal.
       - run: flutter build apk --release --split-per-abi --build-number=${{ github.run_number }}
       - run: |
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "comboio-${TAG}.apk"
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "comboio-${TAG}-celular-antigo-32bits.apk"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "comboio-${TAG}${SUFFIX}.apk"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "comboio-${TAG}-celular-antigo-32bits${SUFFIX}.apk"
 
+      # Só publica o APK do CI quando ele foi assinado com a chave oficial.
+      # Sem os segredos, o APK da release é o gerado e enviado pelo PC.
       - uses: actions/upload-artifact@v4
+        if: ${{ env.SUFFIX == '' }}
         with:
           name: android
           path: comboio-*.apk
