@@ -32,6 +32,8 @@ Capacete A ──Bluetooth── Celular A ══ Wi-Fi local (hotspot) ══ C
 | [docs/02-design.md](docs/02-design.md) | Design system, telas, feedback por voz e vibração |
 | [docs/03-build-e-instalacao.md](docs/03-build-e-instalacao.md) | Como gerar e instalar no iPhone sem Mac e no Android |
 | [docs/04-testes-e-roadmap.md](docs/04-testes-e-roadmap.md) | Testes de campo e roadmap |
+| [docs/05-lojas.md](docs/05-lojas.md) | Textos e respostas para Google Play e App Store |
+| [docs/privacidade.md](docs/privacidade.md) | Política de privacidade |
 
 ## Desenvolvimento
 

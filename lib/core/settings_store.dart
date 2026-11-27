@@ -49,6 +49,9 @@ class Settings extends ChangeNotifier {
 
   String get peerId => _p.getString('peerId')!;
 
+  bool get guideSeen => _p.getBool('guideSeen') ?? false;
+  set guideSeen(bool v) => _set('guideSeen', v);
+
   bool get onboarded => _p.getBool('onboarded') ?? false;
   set onboarded(bool v) => _set('onboarded', v);
 

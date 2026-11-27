@@ -4,9 +4,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../app.dart';
 import '../core/discovery.dart';
-import '../core/platform_bridge.dart';
 import '../design/tokens.dart';
 import '../design/widgets.dart';
+import 'guide_screen.dart';
 import 'pin_pad.dart';
 import 'settings_screen.dart';
 
@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _scannedOnce = false;
   bool _busy = false;
   bool _hasNetwork = true;
-  HelmetStatus _helmet = const HelmetStatus.unknown();
   Timer? _timer;
 
   @override
@@ -33,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refresh();
       _showEndReason();
+      _showGuideOnce();
     });
     _timer = Timer.periodic(const Duration(seconds: 4), (_) => _refresh());
   }
@@ -47,6 +47,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) _refresh();
+  }
+
+  /// Na primeira abertura, mostra o guia de conexão.
+  void _showGuideOnce() {
+    final settings = Deps.of(context).settings;
+    if (settings.guideSeen) return;
+    settings.guideSeen = true;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const GuideScreen()));
   }
 
   void _showEndReason() {
@@ -73,12 +83,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (deps.room.inRoom) return;
     _scanning = true;
     try {
-      final helmet = await deps.platform.helmet();
       final addrs = await localAddresses();
       final rooms = addrs.isEmpty ? <RoomAd>[] : await scanRooms();
       if (!mounted) return;
       setState(() {
-        _helmet = helmet;
         _hasNetwork = addrs.isNotEmpty;
         _rooms = rooms;
         _scannedOnce = true;
@@ -151,7 +159,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final p = context.pal;
-    final deps = Deps.of(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -184,10 +191,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ],
               ),
               const SizedBox(height: Sp.sm),
-              HelmetChip(
-                status: _helmet,
-                onTap: () => deps.platform.openSettings('bluetooth'),
-              ),
+              const _GuideCard(),
               const SizedBox(height: Sp.lg),
               Row(
                 children: [
@@ -394,75 +398,6 @@ class _RoomTile extends StatelessWidget {
   }
 }
 
-/// Estado do capacete: cor + ícone + palavra, nunca só cor.
-class HelmetChip extends StatelessWidget {
-  const HelmetChip({super.key, required this.status, this.onTap});
-
-  final HelmetStatus status;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.pal;
-    final (Color color, IconData icon, String text) = !status.known
-        ? (
-            p.textDim,
-            Icons.headset_mic_rounded,
-            'Capacete: conecte pelo Bluetooth',
-          )
-        : status.connected
-        ? (
-            p.live,
-            Icons.check_circle_rounded,
-            status.name.isEmpty
-                ? 'Capacete conectado'
-                : '${status.name} conectado',
-          )
-        : (
-            p.danger,
-            Icons.warning_rounded,
-            'Capacete desconectado · toque para abrir',
-          );
-    return Material(
-      color: p.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Rd.sm),
-        side: BorderSide(color: color, width: 2),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 56),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Sp.md,
-              vertical: Sp.sm,
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 28, color: color),
-                const SizedBox(width: Sp.sm + Sp.xs),
-                Expanded(
-                  child: Text(
-                    text,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Ty.body.copyWith(
-                      color: p.text,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _IpDialog extends StatefulWidget {
   const _IpDialog();
 
@@ -519,6 +454,61 @@ class _IpDialogState extends State<_IpDialog> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Atalho para o guia "Como conectar", no topo da Home.
+class _GuideCard extends StatelessWidget {
+  const _GuideCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.pal;
+    return Material(
+      color: p.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Rd.sm),
+        side: BorderSide(color: p.border),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const GuideScreen())),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: Touch.min),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sp.md,
+              vertical: Sp.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.help_rounded, size: 30, color: p.accentText),
+                const SizedBox(width: Sp.sm + Sp.xs),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'COMO CONECTAR',
+                        style: Ty.title.copyWith(color: p.text),
+                      ),
+                      Text(
+                        'Capacete, Wi-Fi e sala em 4 passos',
+                        style: Ty.label.copyWith(color: p.textDim),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, size: 28, color: p.text),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

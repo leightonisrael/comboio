@@ -432,16 +432,11 @@ class RoomController extends ChangeNotifier {
     if (h.connected != helmet.connected || h.name != helmet.name) {
       final was = helmet;
       helmet = h;
-      if (was.known && h.known) {
-        if (h.connected) {
-          await platform.routeToHelmet();
-          feedback.say('Capacete conectado');
-        } else {
-          // Sem capacete o áudio cairia no alto-falante: avisa por vibração.
-          feedback.say('Capacete desconectado', strong: true);
-        }
+      // Sem alerta na tela nem na voz: quando o capacete volta, só devolve o
+      // áudio para ele.
+      if (was.known && h.known && h.connected) {
+        await platform.routeToHelmet();
       }
-      notifyListeners();
     }
   }
 

@@ -6,7 +6,6 @@ import '../core/room_controller.dart';
 import '../core/settings_store.dart';
 import '../design/tokens.dart';
 import '../design/widgets.dart';
-import 'home_screen.dart' show HelmetChip;
 import 'settings_screen.dart';
 
 class RoomScreen extends StatelessWidget {
@@ -84,14 +83,6 @@ class RoomScreen extends StatelessWidget {
                       room: room,
                       onLeave: () => _confirmLeave(context, room),
                     ),
-                    if (room.helmet.known && !room.helmet.connected) ...[
-                      const SizedBox(height: Sp.sm),
-                      HelmetChip(
-                        status: room.helmet,
-                        onTap: () =>
-                            Deps.of(context).platform.openSettings('bluetooth'),
-                      ),
-                    ],
                     if (room.phase == RoomPhase.reconnecting) ...[
                       const SizedBox(height: Sp.sm),
                       _Banner(
