@@ -26,6 +26,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>O Comboio usa o microfone do capacete para você conversar com os outros pilotos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>O Comboio não usa a câmera. A biblioteca de chamadas de voz exige esta declaração.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>O Comboio conecta os celulares dos pilotos diretamente, sem internet.</string>
 	<key>NSBonjourServices</key>
