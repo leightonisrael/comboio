@@ -109,18 +109,64 @@ footer a{color:var(--dim)}
 /* ---------- animações ---------- */
 /* hero: ondas saindo do celular e anel de "falando" */
 .stage{position:relative;justify-self:center;width:min(300px,78vw)}
-.stage .phone{position:relative;z-index:1;width:100%;background:var(--bg)}
-.stage .wave{position:absolute;left:50%;top:50%;width:100%;aspect-ratio:1;border-radius:50%;border:2px solid var(--accent);transform:translate(-50%,-50%) scale(.6);opacity:0;animation:wave 4.5s cubic-bezier(.2,.6,.3,1) infinite}
-.stage .wave:nth-child(2){animation-delay:1.5s}
-.stage .wave:nth-child(3){animation-delay:3s}
-@keyframes wave{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}15%{opacity:.5}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
-.talk{position:absolute;z-index:2;left:50%;top:33.2%;width:46%;aspect-ratio:1;border-radius:50%;border:3px solid var(--live);transform:translate(-50%,-50%);opacity:0;animation:talk 1.8s ease-out infinite;pointer-events:none}
-.talk.b{animation-delay:.9s}
-@keyframes talk{0%{transform:translate(-50%,-50%) scale(1);opacity:.7}100%{transform:translate(-50%,-50%) scale(1.45);opacity:0}}
 .hero h1,.hero .lead,.hero .cta,.hero .note,.hero .eyebrow{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
 .hero h1{animation-delay:.08s}.hero .lead{animation-delay:.18s}.hero .cta{animation-delay:.28s}.hero .note{animation-delay:.36s}
 .stage{animation:rise .9s cubic-bezier(.2,.7,.2,1) .2s both}
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+
+/* ---------- celular do topo: a tela da sala refeita em HTML, medidas em cqw ---------- */
+.phone.live{container-type:inline-size;aspect-ratio:1/2;background:var(--bg);box-shadow:0 0 0 1px var(--border),0 30px 80px rgba(0,0,0,.6)}
+.scr{height:100%;display:flex;flex-direction:column;gap:3.7cqw;padding:2cqw 3.7cqw 3.7cqw;font-family:var(--display);font-weight:700;text-transform:uppercase;line-height:1;color:var(--text)}
+.scr svg{display:block;fill:currentColor}
+.s-head{display:flex;align-items:center;gap:3.7cqw}
+.s-exit{display:flex;align-items:center;gap:2.4cqw;height:14.8cqw;padding:0 3.8cqw 0 4.2cqw;border-radius:3.6cqw;background:var(--high);font-size:5.2cqw}
+.s-exit svg{width:6.2cqw;height:6.2cqw;color:#FF4D5E}
+.s-title{flex:1;font-size:5.4cqw;white-space:nowrap}
+.s-title small{display:block;margin-top:1.6cqw;font:700 3.3cqw/1 var(--body);letter-spacing:.03em;color:var(--dim)}
+.s-gear{width:7.4cqw;height:7.4cqw;margin-right:3.7cqw}
+.s-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.s-av{position:relative;width:46.2cqw;aspect-ratio:1;border-radius:50%;border:1.9cqw solid var(--live);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5.2cqw;animation:avGlow 8s linear infinite}
+.s-av::after{content:"";position:absolute;inset:-5.4cqw;border-radius:50%;background:conic-gradient(from 110deg,transparent 0deg,rgba(255,138,0,.05) 20deg,rgba(255,138,0,.55) 120deg,transparent 121deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - .9cqw),#000 calc(100% - .9cqw));mask:radial-gradient(farthest-side,transparent calc(100% - .9cqw),#000 calc(100% - .9cqw))}
+@keyframes avGlow{0%,46%{box-shadow:0 0 9cqw rgba(46,232,107,.35)}52%,96%{box-shadow:0 0 0 rgba(46,232,107,0)}100%{box-shadow:0 0 9cqw rgba(46,232,107,.35)}}
+.s-name{font-size:7.6cqw}
+.s-state{display:grid;margin-top:9cqw;font-size:7.6cqw;color:var(--live);text-align:center}
+.s-link{display:flex;align-items:flex-end;gap:2.6cqw;margin-top:3cqw;font:700 3.3cqw/1 var(--body);letter-spacing:.03em;color:var(--dim)}
+.s-link b{display:flex;align-items:flex-end;gap:.8cqw}
+.s-link b i{width:1.5cqw;border-radius:.4cqw;background:var(--live)}
+.s-link b i:nth-child(1){height:1.5cqw}.s-link b i:nth-child(2){height:2.7cqw}.s-link b i:nth-child(3){height:4cqw}.s-link b i:nth-child(4){height:5.3cqw}
+.s-link span{padding-bottom:.6cqw}
+.s-self{display:flex;align-items:center;gap:4.6cqw;height:16.6cqw;padding:0 4.6cqw 0 4cqw;border-radius:5cqw;background:var(--surface);border:.3cqw solid var(--border)}
+.s-self .dot{width:3.7cqw;height:3.7cqw;border-radius:50%;background:var(--accent);flex:none}
+.s-self .who{flex:1}
+.s-self small{display:block;margin-bottom:1.5cqw;font:700 3.3cqw/1 var(--body);letter-spacing:.03em;color:var(--dim)}
+.s-self .st{display:grid;font-size:5.4cqw;white-space:nowrap}
+.s-self .st .on{color:var(--text)}
+.s-self .st .off{color:var(--live)}
+.s-vol{display:flex;align-items:center;gap:5.6cqw}
+.s-vol .k{flex:none;width:14.8cqw;height:14.8cqw;border-radius:3.6cqw;background:var(--high);display:grid;place-items:center}
+.s-vol .k svg{width:6.4cqw;height:6.4cqw}
+.s-track{flex:1;position:relative;height:2.6cqw;border-radius:2cqw;background:var(--accent) radial-gradient(circle,rgba(10,11,13,.4) .55cqw,transparent .6cqw) 0 50%/4.95cqw 100% repeat-x;margin-right:3.7cqw}
+.s-track::after{content:"";position:absolute;right:-3.7cqw;top:50%;width:7.4cqw;height:7.4cqw;margin-top:-3.7cqw;border-radius:50%;background:#fff}
+.s-ctl{display:flex;gap:3.7cqw}
+.s-mode{flex:0 0 35.5cqw;height:16.6cqw;border-radius:4.4cqw;background:var(--high);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4cqw;font-size:5.4cqw;color:var(--accent)}
+.s-mode small{font:700 3.3cqw/1 var(--body);letter-spacing:.03em;color:var(--dim)}
+.s-mute{flex:1;height:16.6cqw;border-radius:4.4cqw;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;gap:3.4cqw;font-size:5.4cqw}
+.s-mute svg{width:7cqw;height:7cqw}
+/* troca de estado: metade do ciclo o Léo fala, na outra metade você transmite */
+.sw{display:grid}
+.sw>*{grid-area:1/1;justify-self:center}
+.s-self .sw>*{justify-self:start}
+.on{opacity:1;animation:stA 8s linear infinite}
+.off{opacity:0;animation:stB 8s linear infinite}
+.wv{display:flex;align-items:center;justify-content:center;gap:1.6cqw;height:7cqw;color:#3DA9FF}
+.wv i{width:1.7cqw;height:1.7cqw;border-radius:1cqw;background:currentColor}
+.wv.bars i{height:6.6cqw;animation:wv .8s ease-in-out infinite}
+.wv.bars i:nth-child(1){animation-delay:-.55s;height:3cqw}.wv.bars i:nth-child(2){animation-delay:-.2s;height:5cqw}.wv.bars i:nth-child(3){animation-delay:-.4s}.wv.bars i:nth-child(4){animation-delay:-.1s;height:5cqw}.wv.bars i:nth-child(5){animation-delay:-.65s;height:3cqw}
+@keyframes wv{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+.s-self .wv{color:var(--accent)}
+.s-self .wv.bars{opacity:0;animation:stB 8s linear infinite}
+.s-self .wv.dots{opacity:1;animation:stA 8s linear infinite}
 
 /* diagrama: a voz vai de A para B e depois de B para A (ciclo de 8 s) */
 .wire b{position:relative;overflow:hidden}
@@ -159,7 +205,6 @@ footer a{color:var(--dim)}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .stage .wave,.talk{display:none}
   .js .reveal{opacity:1;transform:none}
   .rider.a{border-color:var(--live)}
   .rider.b .state .on,.rider.a .state .off{opacity:0}
@@ -191,9 +236,33 @@ footer a{color:var(--dim)}
       <p class="note">Gratuito, sem cadastro e sem anúncios. A versão 0.1.3 está em análise nas duas lojas; os links passam a funcionar assim que for aprovada.</p>
     </div>
     <div class="stage">
-      <span class="wave" aria-hidden="true"></span><span class="wave" aria-hidden="true"></span><span class="wave" aria-hidden="true"></span>
-      <div class="phone"><img src="img/1-sala.png" width="1080" height="2160" alt="Tela da sala do Comboio mostrando o piloto Léo falando, o volume e o botão de silenciar"></div>
-      <span class="talk" aria-hidden="true"></span><span class="talk b" aria-hidden="true"></span>
+      <div class="phone live" role="img" aria-label="Tela da sala do Comboio: o piloto Léo falando, depois você transmitindo, com volume e botão de silenciar">
+        <div class="scr" aria-hidden="true">
+          <div class="s-head">
+            <div class="s-exit"><svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Sair</div>
+            <div class="s-title">Sala de Israel<small>PIN 482915</small></div>
+            <svg class="s-gear" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/></svg>
+          </div>
+          <div class="s-main">
+            <div class="s-av">
+              <div class="sw"><div class="wv bars on"><i></i><i></i><i></i><i></i><i></i></div><div class="wv dots off"><i></i><i></i><i></i><i></i><i></i></div></div>
+              <div class="s-name">Léo</div>
+            </div>
+            <div class="s-state sw"><span class="on">Falando</span><span class="off">Conectado</span></div>
+            <div class="s-link"><b><i></i><i></i><i></i><i></i></b><span>LINK 4/4</span></div>
+          </div>
+          <div class="s-self">
+            <span class="dot"></span>
+            <div class="who"><small>VOCÊ · ISRAEL</small><div class="st sw"><span class="on">Aguardando voz</span><span class="off">Transmitindo</span></div></div>
+            <div class="sw"><div class="wv dots"><i></i><i></i><i></i><i></i><i></i></div><div class="wv bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+          </div>
+          <div class="s-vol"><span class="k"><svg viewBox="0 0 24 24"><path d="M18.5 12A4.5 4.5 0 0 0 16 7.97v8.05A4.5 4.5 0 0 0 18.5 12zM5 9v6h4l5 5V4L9 9H5z"/></svg></span><span class="s-track"></span><span class="k"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/></svg></span></div>
+          <div class="s-ctl">
+            <div class="s-mode"><small>MODO</small>Aberto</div>
+            <div class="s-mute"><svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>Silenciar</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
