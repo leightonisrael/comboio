@@ -26,16 +26,28 @@ class RoomAd {
 }
 
 bool _isPrivate(List<int> b) =>
-    b[0] == 10 || (b[0] == 172 && b[1] >= 16 && b[1] <= 31) || (b[0] == 192 && b[1] == 168);
+    b[0] == 10 ||
+    (b[0] == 172 && b[1] >= 16 && b[1] <= 31) ||
+    (b[0] == 192 && b[1] == 168);
 
-const _cellularPrefixes = ['rmnet', 'pdp_ip', 'ccmni', 'v4-rmnet', 'tun', 'ipsec', 'utun'];
+const _cellularPrefixes = [
+  'rmnet',
+  'pdp_ip',
+  'ccmni',
+  'v4-rmnet',
+  'tun',
+  'ipsec',
+  'utun',
+];
 
 /// Endereços IPv4 deste aparelho em redes locais (Wi-Fi ou hotspot).
 Future<List<InternetAddress>> localAddresses() async {
   final out = <InternetAddress>[];
   try {
-    final ifaces =
-        await NetworkInterface.list(type: InternetAddressType.IPv4, includeLoopback: false);
+    final ifaces = await NetworkInterface.list(
+      type: InternetAddressType.IPv4,
+      includeLoopback: false,
+    );
     for (final i in ifaces) {
       final name = i.name.toLowerCase();
       if (_cellularPrefixes.any(name.startsWith)) continue;
@@ -48,12 +60,20 @@ Future<List<InternetAddress>> localAddresses() async {
 }
 
 /// Consulta `/info` em um endereço. Retorna null se não houver sala ali.
-Future<RoomAd?> probe(String ip, {int port = kPort, int timeoutMs = 900}) async {
-  final client = HttpClient()..connectionTimeout = Duration(milliseconds: timeoutMs);
+Future<RoomAd?> probe(
+  String ip, {
+  int port = kPort,
+  int timeoutMs = 900,
+}) async {
+  final client = HttpClient()
+    ..connectionTimeout = Duration(milliseconds: timeoutMs);
   try {
     final req = await client.getUrl(Uri.parse('http://$ip:$port/info'));
     final res = await req.close().timeout(Duration(milliseconds: timeoutMs));
-    final body = await res.transform(utf8.decoder).join().timeout(Duration(milliseconds: timeoutMs));
+    final body = await res
+        .transform(utf8.decoder)
+        .join()
+        .timeout(Duration(milliseconds: timeoutMs));
     final j = jsonDecode(body);
     if (j is! Map || j['app'] != 'comboio') return null;
     return RoomAd(
@@ -94,7 +114,9 @@ Future<List<RoomAd>> scanRooms() async {
     const batch = 64;
     for (var i = 0; i < ips.length; i += batch) {
       final slice = ips.skip(i).take(batch);
-      final ads = await Future.wait(slice.map((ip) => probe(ip, timeoutMs: timeoutMs)));
+      final ads = await Future.wait(
+        slice.map((ip) => probe(ip, timeoutMs: timeoutMs)),
+      );
       for (final ad in ads) {
         if (ad != null) found[ad.hostId.isEmpty ? ad.ip : ad.hostId] = ad;
       }

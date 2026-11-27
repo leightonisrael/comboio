@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../design/tokens.dart';
@@ -50,26 +50,26 @@ class _PinPadState extends State<_PinPad> {
   Widget build(BuildContext context) {
     final p = context.pal;
     Widget key(String label, {VoidCallback? onTap, IconData? icon}) => Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(Sp.xs + 2),
-            child: Material(
-              color: p.surfaceHigh,
-              borderRadius: BorderRadius.circular(Rd.sm),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: onTap,
-                child: SizedBox(
-                  height: Touch.primary,
-                  child: Center(
-                    child: icon != null
-                        ? Icon(icon, size: 32, color: p.text)
-                        : Text(label, style: Ty.headline.copyWith(color: p.text)),
-                  ),
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(Sp.xs + 2),
+        child: Material(
+          color: p.surfaceHigh,
+          borderRadius: BorderRadius.circular(Rd.sm),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              height: Touch.primary,
+              child: Center(
+                child: icon != null
+                    ? Icon(icon, size: 32, color: p.text)
+                    : Text(label, style: Ty.headline.copyWith(color: p.text)),
               ),
             ),
           ),
-        );
+        ),
+      ),
+    );
 
     return SafeArea(
       child: Padding(
@@ -77,13 +77,18 @@ class _PinPadState extends State<_PinPad> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(widget.title.toUpperCase(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Ty.title.copyWith(color: p.text)),
+            Text(
+              widget.title.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Ty.title.copyWith(color: p.text),
+            ),
             const SizedBox(height: Sp.xs),
-            Text('Digite o PIN que aparece na tela do outro piloto',
-                textAlign: TextAlign.center, style: Ty.body.copyWith(color: p.textDim)),
+            Text(
+              'Digite o PIN que aparece na tela do outro piloto',
+              textAlign: TextAlign.center,
+              style: Ty.body.copyWith(color: p.textDim),
+            ),
             const SizedBox(height: Sp.md),
             Semantics(
               label: 'PIN, ${_pin.length} de 6 dígitos',
@@ -104,8 +109,10 @@ class _PinPadState extends State<_PinPad> {
                           width: 2,
                         ),
                       ),
-                      child: Text(i < _pin.length ? _pin[i] : '',
-                          style: Ty.headline.copyWith(color: p.text)),
+                      child: Text(
+                        i < _pin.length ? _pin[i] : '',
+                        style: Ty.headline.copyWith(color: p.text),
+                      ),
                     ),
                 ],
               ),
@@ -116,10 +123,16 @@ class _PinPadState extends State<_PinPad> {
               ['4', '5', '6'],
               ['7', '8', '9'],
             ])
-              Row(children: [for (final d in row) key(d, onTap: () => _press(d))]),
+              Row(
+                children: [for (final d in row) key(d, onTap: () => _press(d))],
+              ),
             Row(
               children: [
-                key('', icon: Icons.close_rounded, onTap: () => Navigator.of(context).pop()),
+                key(
+                  '',
+                  icon: Icons.close_rounded,
+                  onTap: () => Navigator.of(context).pop(),
+                ),
                 key('0', onTap: () => _press('0')),
                 key('', icon: Icons.backspace_rounded, onTap: _back),
               ],

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Paleta semântica. Cada cor tem um significado fixo (ver docs/02-design.md).
 @immutable
@@ -116,17 +116,38 @@ const displayFont = 'SairaCondensed';
 
 abstract final class Ty {
   static const display = TextStyle(
-      fontFamily: displayFont, fontWeight: FontWeight.w700, fontSize: 56, height: 1.0);
+    fontFamily: displayFont,
+    fontWeight: FontWeight.w700,
+    fontSize: 56,
+    height: 1.0,
+  );
   static const headline = TextStyle(
-      fontFamily: displayFont, fontWeight: FontWeight.w700, fontSize: 34, height: 1.12);
+    fontFamily: displayFont,
+    fontWeight: FontWeight.w700,
+    fontSize: 34,
+    height: 1.12,
+  );
   static const title = TextStyle(
-      fontFamily: displayFont, fontWeight: FontWeight.w600, fontSize: 24, height: 1.17);
+    fontFamily: displayFont,
+    fontWeight: FontWeight.w600,
+    fontSize: 24,
+    height: 1.17,
+  );
   static const button = TextStyle(
-      fontFamily: displayFont,
-      fontWeight: FontWeight.w700,
-      fontSize: 22,
-      height: 1.1,
-      letterSpacing: 0.5);
-  static const body = TextStyle(fontWeight: FontWeight.w400, fontSize: 17, height: 1.4);
-  static const label = TextStyle(fontWeight: FontWeight.w600, fontSize: 14, height: 1.3);
+    fontFamily: displayFont,
+    fontWeight: FontWeight.w700,
+    fontSize: 22,
+    height: 1.1,
+    letterSpacing: 0.5,
+  );
+  static const body = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 17,
+    height: 1.4,
+  );
+  static const label = TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    height: 1.3,
+  );
 }

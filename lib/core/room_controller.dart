@@ -68,8 +68,11 @@ class RoomController extends ChangeNotifier {
   DateTime _voxHold = DateTime.fromMillisecondsSinceEpoch(0);
   int _session = 0;
 
-  PeerInfo get _self =>
-      PeerInfo(id: settings.peerId, name: settings.name, color: settings.colorIndex);
+  PeerInfo get _self => PeerInfo(
+    id: settings.peerId,
+    name: settings.name,
+    color: settings.colorIndex,
+  );
 
   TalkMode get mode => settings.mode;
   bool get inRoom => phase != RoomPhase.idle;
@@ -107,7 +110,11 @@ class RoomController extends ChangeNotifier {
   }
 
   /// Retorna null em caso de sucesso, ou o erro para a tela tratar.
-  Future<JoinError?> joinRoom(String ip, String pinCode, {String? knownHostId}) async {
+  Future<JoinError?> joinRoom(
+    String ip,
+    String pinCode, {
+    String? knownHostId,
+  }) async {
     if (inRoom) return null;
     final session = ++_session;
     phase = RoomPhase.starting;
@@ -118,7 +125,11 @@ class RoomController extends ChangeNotifier {
     pin = pinCode;
     notifyListeners();
     try {
-      final client = await SignalingClient.connect(host: ip, self: _self, pin: pinCode);
+      final client = await SignalingClient.connect(
+        host: ip,
+        self: _self,
+        pin: pinCode,
+      );
       if (session != _session) {
         await client.close();
         return null;
@@ -147,7 +158,9 @@ class RoomController extends ChangeNotifier {
 
   bool _isMicError(Object e) {
     final s = e.toString().toLowerCase();
-    return s.contains('permission') || s.contains('notallowed') || s.contains('getusermedia');
+    return s.contains('permission') ||
+        s.contains('notallowed') ||
+        s.contains('getusermedia');
   }
 
   Future<void> leave({String? reason}) async {
@@ -164,7 +177,9 @@ class RoomController extends ChangeNotifier {
   // ------------------------------------------------------------------ mídia
 
   Future<void> _startMedia() async {
-    await platform.startBackground(roomName.isEmpty ? 'Conversa ativa' : roomName);
+    await platform.startBackground(
+      roomName.isEmpty ? 'Conversa ativa' : roomName,
+    );
     await platform.configureAudio();
     _local = await navigator.mediaDevices.getUserMedia({
       'audio': {
@@ -186,8 +201,14 @@ class RoomController extends ChangeNotifier {
     _sub?.cancel();
     _sig = sig;
     _sub = sig.messages.listen(_onMessage);
-    _tick ??= Timer.periodic(const Duration(milliseconds: 250), (_) => _onTick());
-    _stats ??= Timer.periodic(const Duration(milliseconds: 120), (_) => _pollStats());
+    _tick ??= Timer.periodic(
+      const Duration(milliseconds: 250),
+      (_) => _onTick(),
+    );
+    _stats ??= Timer.periodic(
+      const Duration(milliseconds: 120),
+      (_) => _pollStats(),
+    );
   }
 
   Future<void> _teardown() async {
@@ -234,7 +255,9 @@ class RoomController extends ChangeNotifier {
     final from = m['from'] as String?;
     switch (m['t']) {
       case 'peer-joined':
-        _addPeer(PeerInfo.fromJson(Map<String, dynamic>.from(m['peer'] as Map)));
+        _addPeer(
+          PeerInfo.fromJson(Map<String, dynamic>.from(m['peer'] as Map)),
+        );
       case 'peer-left':
         final id = '${m['id']}';
         if (m['reason'] == 'bye') {
@@ -300,7 +323,10 @@ class RoomController extends ChangeNotifier {
 
   void _onOffer(String from, Map<String, dynamic> m) {
     if (_local == null) return;
-    pilots.putIfAbsent(from, () => PilotView(PeerInfo(id: from, name: 'Piloto', color: 0)));
+    pilots.putIfAbsent(
+      from,
+      () => PilotView(PeerInfo(id: from, name: 'Piloto', color: 0)),
+    );
     _newLink(from, '${m['sid']}').onOffer('${m['sdp']}').catchError((_) {});
   }
 
@@ -363,7 +389,9 @@ class RoomController extends ChangeNotifier {
             feedback.say('${view.info.name} reconectado');
           }
           view.lostSince = null;
-        } else if (next == LinkState.lost && view.everConnected && view.lostSince == null) {
+        } else if (next == LinkState.lost &&
+            view.everConnected &&
+            view.lostSince == null) {
           view.lostSince = now;
           feedback.say('${view.info.name} fora do alcance', strong: true);
         }
@@ -371,7 +399,8 @@ class RoomController extends ChangeNotifier {
       }
       if (link != null) {
         view.muted = link.remoteMuted;
-        view.talking = next == LinkState.connected && link.remoteTx && !link.remoteMuted;
+        view.talking =
+            next == LinkState.connected && link.remoteTx && !link.remoteMuted;
         view.level = view.talking ? link.remoteLevel : 0;
         if (takeQuality) view.quality = link.takeQuality();
       } else {
@@ -381,9 +410,13 @@ class RoomController extends ChangeNotifier {
       }
 
       // Quem é o ofertante refaz a conexão enquanto o link estiver caído.
-      if (next == LinkState.lost && phase == RoomPhase.active && _isOfferer(id)) {
+      if (next == LinkState.lost &&
+          phase == RoomPhase.active &&
+          _isOfferer(id)) {
         final last = _lastOffer[id];
-        if (last == null || now.difference(last).inSeconds >= 4) _startOffer(id);
+        if (last == null || now.difference(last).inSeconds >= 4) {
+          _startOffer(id);
+        }
       }
     }
     if (_ticks % 8 == 0) {

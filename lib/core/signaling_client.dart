@@ -59,10 +59,16 @@ class SignalingClient implements Signaling {
         switch (msg['t']) {
           case 'challenge':
             nonceH = '${msg['nonce']}';
-            ws.add(jsonEncode({'t': 'auth', 'proof': pinProof(pin, nonceH!, nonceC, self.id)}));
+            ws.add(
+              jsonEncode({
+                't': 'auth',
+                'proof': pinProof(pin, nonceH!, nonceC, self.id),
+              }),
+            );
           case 'welcome':
             // O host também prova que conhece o PIN.
-            if (nonceH == null || msg['proof'] != pinProof(pin, nonceC, nonceH!, 'host')) {
+            if (nonceH == null ||
+                msg['proof'] != pinProof(pin, nonceC, nonceH!, 'host')) {
               fail('auth');
               return;
             }
@@ -87,12 +93,14 @@ class SignalingClient implements Signaling {
       cancelOnError: true,
     );
 
-    ws.add(jsonEncode({
-      't': 'hello',
-      'v': kProtocolVersion,
-      ...self.toJson(),
-      'nonce': nonceC,
-    }));
+    ws.add(
+      jsonEncode({
+        't': 'hello',
+        'v': kProtocolVersion,
+        ...self.toJson(),
+        'nonce': nonceC,
+      }),
+    );
 
     try {
       await welcomed.future.timeout(timeout);

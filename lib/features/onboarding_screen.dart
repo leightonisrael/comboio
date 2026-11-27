@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../app.dart';
 import '../design/tokens.dart';
@@ -56,21 +56,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: ListView(
                   children: [
                     const SizedBox(height: Sp.md),
-                    Text('COMBOIO', style: Ty.display.copyWith(color: p.accentText)),
+                    Text(
+                      'COMBOIO',
+                      style: Ty.display.copyWith(color: p.accentText),
+                    ),
                     const SizedBox(height: Sp.sm),
-                    Text('Conversa entre pilotos, sem internet.',
-                        style: Ty.title.copyWith(color: p.text)),
+                    Text(
+                      'Conversa entre pilotos, sem internet.',
+                      style: Ty.title.copyWith(color: p.text),
+                    ),
                     const SizedBox(height: Sp.xl),
                     _Reason(
                       icon: Icons.mic_rounded,
                       title: 'Microfone',
-                      body: 'Para os outros pilotos ouvirem você pelo capacete.',
+                      body:
+                          'Para os outros pilotos ouvirem você pelo capacete.',
                     ),
                     if (Platform.isAndroid) ...[
                       _Reason(
                         icon: Icons.bluetooth_rounded,
                         title: 'Dispositivos próximos',
-                        body: 'Para usar o microfone e o fone do capacete Bluetooth.',
+                        body:
+                            'Para usar o microfone e o fone do capacete Bluetooth.',
                       ),
                       _Reason(
                         icon: Icons.notifications_rounded,
@@ -84,19 +91,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         body: 'Para os celulares se encontrarem sem internet.',
                       ),
                     const SizedBox(height: Sp.lg),
-                    Text('SEU NOME', style: Ty.label.copyWith(color: p.textDim)),
+                    Text(
+                      'SEU NOME',
+                      style: Ty.label.copyWith(color: p.textDim),
+                    ),
                     const SizedBox(height: Sp.sm),
                     TextField(
                       controller: _name,
                       textCapitalization: TextCapitalization.words,
                       maxLength: 16,
                       style: Ty.title.copyWith(color: p.text),
-                      decoration: const InputDecoration(hintText: 'Piloto', counterText: ''),
+                      decoration: const InputDecoration(
+                        hintText: 'Piloto',
+                        counterText: '',
+                      ),
                     ),
                     const SizedBox(height: Sp.lg),
                     Text('SUA COR', style: Ty.label.copyWith(color: p.textDim)),
                     const SizedBox(height: Sp.sm),
-                    ColorPickerRow(selected: _color, onChanged: (i) => setState(() => _color = i)),
+                    ColorPickerRow(
+                      selected: _color,
+                      onChanged: (i) => setState(() => _color = i),
+                    ),
                     if (_micDenied) ...[
                       const SizedBox(height: Sp.lg),
                       Text(
@@ -109,7 +125,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         label: 'Abrir ajustes',
                         kind: BigButtonKind.quiet,
                         height: Touch.min,
-                        onPressed: () => Deps.of(context).platform.openSettings('app'),
+                        onPressed: () =>
+                            Deps.of(context).platform.openSettings('app'),
                       ),
                     ],
                   ],
@@ -162,7 +179,11 @@ class _Reason extends StatelessWidget {
 
 /// Seis bolinhas grandes para escolher a cor do piloto.
 class ColorPickerRow extends StatelessWidget {
-  const ColorPickerRow({super.key, required this.selected, required this.onChanged});
+  const ColorPickerRow({
+    super.key,
+    required this.selected,
+    required this.onChanged,
+  });
 
   final int selected;
   final ValueChanged<int> onChanged;

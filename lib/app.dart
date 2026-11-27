@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'core/feedback_service.dart';
 import 'core/platform_bridge.dart';
@@ -25,7 +25,8 @@ class Deps extends InheritedWidget {
   final FeedbackService feedback;
   final PlatformBridge platform;
 
-  static Deps of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<Deps>()!;
+  static Deps of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<Deps>()!;
 
   @override
   bool updateShouldNotify(Deps oldWidget) => false;
@@ -106,14 +107,18 @@ class _RoomSwitchState extends State<_RoomSwitch> {
   }
 
   void _onChange() {
-    if (widget.room.inRoom != _inRoom) setState(() => _inRoom = widget.room.inRoom);
+    if (widget.room.inRoom != _inRoom) {
+      setState(() => _inRoom = widget.room.inRoom);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 220),
-      child: _inRoom ? const RoomScreen(key: ValueKey('room')) : const HomeScreen(key: ValueKey('home')),
+      child: _inRoom
+          ? const RoomScreen(key: ValueKey('room'))
+          : const HomeScreen(key: ValueKey('home')),
     );
   }
 }

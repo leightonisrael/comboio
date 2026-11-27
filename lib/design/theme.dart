@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'tokens.dart';
 
@@ -46,14 +46,19 @@ ThemeData buildTheme(Brightness brightness) {
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? p.onAccent : p.textDim),
+        (s) => s.contains(WidgetState.selected) ? p.onAccent : p.textDim,
+      ),
       trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? p.accent : p.surfaceHigh),
+        (s) => s.contains(WidgetState.selected) ? p.accent : p.surfaceHigh,
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: p.surfaceHigh,
-      contentPadding: const EdgeInsets.symmetric(horizontal: Sp.md, vertical: 20),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: Sp.md,
+        vertical: 20,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(Rd.sm),
         borderSide: BorderSide(color: p.border),

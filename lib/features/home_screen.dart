@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../app.dart';
 import '../core/discovery.dart';
@@ -62,7 +62,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
-      ..showSnackBar(SnackBar(content: Text(text), duration: const Duration(seconds: 5)));
+      ..showSnackBar(
+        SnackBar(content: Text(text), duration: const Duration(seconds: 5)),
+      );
   }
 
   Future<void> _refresh() async {
@@ -130,7 +132,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _manualJoin() async {
-    final ip = await showDialog<String>(context: context, builder: (_) => const _IpDialog());
+    final ip = await showDialog<String>(
+      context: context,
+      builder: (_) => const _IpDialog(),
+    );
     if (ip == null || ip.isEmpty || !mounted) return;
     setState(() => _busy = true);
     final ad = await probe(ip, timeoutMs: 2500);
@@ -157,15 +162,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               Row(
                 children: [
                   Expanded(
-                    child: Text('COMBOIO', style: Ty.headline.copyWith(color: p.accentText)),
+                    child: Text(
+                      'COMBOIO',
+                      style: Ty.headline.copyWith(color: p.accentText),
+                    ),
                   ),
                   IconButton(
                     tooltip: 'Configurações',
                     iconSize: 32,
-                    constraints: const BoxConstraints(minWidth: Touch.min, minHeight: Touch.min),
+                    constraints: const BoxConstraints(
+                      minWidth: Touch.min,
+                      minHeight: Touch.min,
+                    ),
                     icon: Icon(Icons.settings_rounded, color: p.text),
-                    onPressed: () => Navigator.of(context)
-                        .push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen())),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -178,13 +192,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               Row(
                 children: [
                   Expanded(
-                    child: Text('SALAS POR PERTO', style: Ty.label.copyWith(color: p.textDim)),
+                    child: Text(
+                      'SALAS POR PERTO',
+                      style: Ty.label.copyWith(color: p.textDim),
+                    ),
                   ),
                   if (_scanning || !_scannedOnce)
                     SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: p.textDim),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: p.textDim,
+                      ),
                     ),
                 ],
               ),
@@ -220,7 +240,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         itemBuilder: (context, i) {
           final ad = _rooms[i];
           final known = deps.settings.pinFor(ad.hostId) != null;
-          return _RoomTile(ad: ad, known: known, onTap: _busy ? null : () => _join(ad));
+          return Rise(
+            key: ValueKey(ad.hostId + ad.ip),
+            delay: Duration(milliseconds: 80 * i),
+            child: _RoomTile(
+              ad: ad,
+              known: known,
+              onTap: _busy ? null : () => _join(ad),
+            ),
+          );
         },
       );
     }
@@ -230,7 +258,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (!_hasNetwork) {
       icon = Icons.wifi_off_rounded;
       title = 'SEM REDE LOCAL';
-      body = 'Para entrar: conecte no Wi-Fi (hotspot) do outro piloto.\n'
+      body =
+          'Para entrar: conecte no Wi-Fi (hotspot) do outro piloto.\n'
           'Para criar: ligue o seu hotspot e toque em Criar sala.';
     } else if (!_scannedOnce) {
       icon = Icons.sensors_rounded;
@@ -239,18 +268,30 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else {
       icon = Icons.sensors_rounded;
       title = 'NENHUMA SALA POR PERTO';
-      body = 'Confira se você está no Wi-Fi do outro piloto e se ele já criou a sala.';
+      body =
+          'Confira se você está no Wi-Fi do outro piloto e se ele já criou a sala.';
     }
     return Panel(
       padding: const EdgeInsets.all(Sp.lg),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 56, color: p.textDim),
+          if (_hasNetwork)
+            RadarPulse(color: p.accent, size: 150)
+          else
+            Icon(icon, size: 56, color: p.textDim),
           const SizedBox(height: Sp.md),
-          Text(title, textAlign: TextAlign.center, style: Ty.title.copyWith(color: p.text)),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: Ty.title.copyWith(color: p.text),
+          ),
           const SizedBox(height: Sp.sm),
-          Text(body, textAlign: TextAlign.center, style: Ty.body.copyWith(color: p.textDim)),
+          Text(
+            body,
+            textAlign: TextAlign.center,
+            style: Ty.body.copyWith(color: p.textDim),
+          ),
           if (!_hasNetwork) ...[
             const SizedBox(height: Sp.md),
             Row(
@@ -296,7 +337,10 @@ class _RoomTile extends StatelessWidget {
       color: p.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Rd.md),
-        side: BorderSide(color: known ? p.live : p.border, width: known ? 2 : 1),
+        side: BorderSide(
+          color: known ? p.live : p.border,
+          width: known ? 2 : 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -304,29 +348,37 @@ class _RoomTile extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: Touch.primary + 8),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Sp.md, vertical: Sp.sm + Sp.xs),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sp.md,
+              vertical: Sp.sm + Sp.xs,
+            ),
             child: Row(
               children: [
                 Container(
                   width: 20,
                   height: 20,
-                  decoration: BoxDecoration(color: pilotColor(ad.color), shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: pilotColor(ad.color),
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 const SizedBox(width: Sp.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(ad.room,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Ty.title.copyWith(color: p.text)),
+                      Text(
+                        ad.room,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Ty.title.copyWith(color: p.text),
+                      ),
                       Text(
                         full
                             ? 'Sala cheia'
                             : known
-                                ? 'Piloto conhecido · toque para entrar'
-                                : 'Pede PIN · ${ad.count}/${ad.max} pilotos',
+                            ? 'Piloto conhecido · toque para entrar'
+                            : 'Pede PIN · ${ad.count}/${ad.max} pilotos',
                         style: Ty.label.copyWith(color: p.textDim),
                       ),
                     ],
@@ -353,14 +405,24 @@ class HelmetChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.pal;
     final (Color color, IconData icon, String text) = !status.known
-        ? (p.textDim, Icons.headset_mic_rounded, 'Capacete: conecte pelo Bluetooth')
+        ? (
+            p.textDim,
+            Icons.headset_mic_rounded,
+            'Capacete: conecte pelo Bluetooth',
+          )
         : status.connected
-            ? (
-                p.live,
-                Icons.check_circle_rounded,
-                status.name.isEmpty ? 'Capacete conectado' : '${status.name} conectado'
-              )
-            : (p.danger, Icons.warning_rounded, 'Capacete desconectado · toque para abrir');
+        ? (
+            p.live,
+            Icons.check_circle_rounded,
+            status.name.isEmpty
+                ? 'Capacete conectado'
+                : '${status.name} conectado',
+          )
+        : (
+            p.danger,
+            Icons.warning_rounded,
+            'Capacete desconectado · toque para abrir',
+          );
     return Material(
       color: p.surface,
       shape: RoundedRectangleBorder(
@@ -373,16 +435,24 @@ class HelmetChip extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 56),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Sp.md, vertical: Sp.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sp.md,
+              vertical: Sp.sm,
+            ),
             child: Row(
               children: [
                 Icon(icon, size: 28, color: color),
                 const SizedBox(width: Sp.sm + Sp.xs),
                 Expanded(
-                  child: Text(text,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Ty.body.copyWith(color: p.text, fontWeight: FontWeight.w600)),
+                  child: Text(
+                    text,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Ty.body.copyWith(
+                      color: p.text,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -418,8 +488,10 @@ class _IpDialogState extends State<_IpDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Aparece na tela de quem criou a sala.',
-              style: Ty.body.copyWith(color: p.textDim)),
+          Text(
+            'Aparece na tela de quem criou a sala.',
+            style: Ty.body.copyWith(color: p.textDim),
+          ),
           const SizedBox(height: Sp.md),
           TextField(
             controller: _c,
@@ -434,11 +506,17 @@ class _IpDialogState extends State<_IpDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('CANCELAR', style: Ty.button.copyWith(color: p.textDim, fontSize: 18)),
+          child: Text(
+            'CANCELAR',
+            style: Ty.button.copyWith(color: p.textDim, fontSize: 18),
+          ),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(_c.text.trim()),
-          child: Text('ENTRAR', style: Ty.button.copyWith(color: p.accentText, fontSize: 18)),
+          child: Text(
+            'ENTRAR',
+            style: Ty.button.copyWith(color: p.accentText, fontSize: 18),
+          ),
         ),
       ],
     );

@@ -41,7 +41,11 @@ class SignalingHost implements Signaling {
   int get boundPort => _server?.port ?? port;
 
   Future<void> start() async {
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, port, shared: true);
+    _server = await HttpServer.bind(
+      InternetAddress.anyIPv4,
+      port,
+      shared: true,
+    );
     _server!.listen(_onRequest, onError: (_) {});
   }
 
@@ -49,16 +53,18 @@ class SignalingHost implements Signaling {
     try {
       if (req.uri.path == '/info') {
         req.response.headers.contentType = ContentType.json;
-        req.response.write(jsonEncode({
-          'app': 'comboio',
-          'v': kProtocolVersion,
-          'room': roomName,
-          'hid': self.id,
-          'host': self.name,
-          'color': self.color,
-          'n': _clients.length + 1,
-          'max': kMaxPilots,
-        }));
+        req.response.write(
+          jsonEncode({
+            'app': 'comboio',
+            'v': kProtocolVersion,
+            'room': roomName,
+            'hid': self.id,
+            'host': self.name,
+            'color': self.color,
+            'n': _clients.length + 1,
+            'max': kMaxPilots,
+          }),
+        );
         await req.response.close();
         return;
       }
@@ -104,10 +110,14 @@ class SignalingHost implements Signaling {
       if (t == 'hello') {
         if (msg['v'] != kProtocolVersion) return _reject(c, 'version');
         final locked = _lockedUntil;
-        if (locked != null && DateTime.now().isBefore(locked)) return _reject(c, 'locked');
+        if (locked != null && DateTime.now().isBefore(locked)) {
+          return _reject(c, 'locked');
+        }
         final info = PeerInfo.fromJson(msg);
         final rejoining = _clients.containsKey(info.id);
-        if (!rejoining && _clients.length + 1 >= kMaxPilots) return _reject(c, 'full');
+        if (!rejoining && _clients.length + 1 >= kMaxPilots) {
+          return _reject(c, 'full');
+        }
         if (info.id == self.id) return _reject(c, 'auth');
         c.info = info;
         c.nonceC = '${msg['nonce']}';

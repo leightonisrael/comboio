@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import 'tokens.dart';
@@ -44,7 +44,9 @@ class BigButton extends StatelessWidget {
           color: bg,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Rd.md),
-            side: line == null ? BorderSide.none : BorderSide(color: line, width: 2),
+            side: line == null
+                ? BorderSide.none
+                : BorderSide(color: line, width: 2),
           ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -104,9 +106,12 @@ class VoiceWave extends StatefulWidget {
   State<VoiceWave> createState() => _VoiceWaveState();
 }
 
-class _VoiceWaveState extends State<VoiceWave> with SingleTickerProviderStateMixin {
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+class _VoiceWaveState extends State<VoiceWave>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 2),
+  )..repeat();
   double _shown = 0;
 
   @override
@@ -168,7 +173,10 @@ class _WavePainter extends CustomPainter {
         width: w,
         height: h.clamp(6.0, size.height),
       );
-      canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(w / 2)), paint);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(w / 2)),
+        paint,
+      );
     }
   }
 
@@ -186,6 +194,7 @@ class StatusRing extends StatefulWidget {
     this.size = 168,
     this.pulseHz = 0,
     this.thickness = 6,
+    this.glow = false,
   });
 
   final Color color;
@@ -194,11 +203,15 @@ class StatusRing extends StatefulWidget {
   final double pulseHz;
   final double thickness;
 
+  /// Halo que respira em volta do anel: usado enquanto o piloto fala.
+  final bool glow;
+
   @override
   State<StatusRing> createState() => _StatusRingState();
 }
 
-class _StatusRingState extends State<StatusRing> with SingleTickerProviderStateMixin {
+class _StatusRingState extends State<StatusRing>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(vsync: this);
 
   @override
@@ -210,12 +223,13 @@ class _StatusRingState extends State<StatusRing> with SingleTickerProviderStateM
   @override
   void didUpdateWidget(StatusRing old) {
     super.didUpdateWidget(old);
-    if (old.pulseHz != widget.pulseHz) _sync();
+    if (old.pulseHz != widget.pulseHz || old.glow != widget.glow) _sync();
   }
 
   void _sync() {
-    if (widget.pulseHz > 0) {
-      _c.duration = Duration(milliseconds: (1000 / widget.pulseHz).round());
+    final hz = widget.pulseHz > 0 ? widget.pulseHz : (widget.glow ? 0.8 : 0.0);
+    if (hz > 0) {
+      _c.duration = Duration(milliseconds: (1000 / hz).round());
       _c.repeat(reverse: true);
     } else {
       _c.stop();
@@ -236,14 +250,26 @@ class _StatusRingState extends State<StatusRing> with SingleTickerProviderStateM
       animation: _c,
       child: widget.child,
       builder: (context, child) {
-        final alpha = (widget.pulseHz > 0 && !reduce) ? 1 - 0.65 * _c.value : 1.0;
-        return Container(
+        final alpha = (widget.pulseHz > 0 && !reduce)
+            ? 1 - 0.65 * _c.value
+            : 1.0;
+        final v = Curves.easeInOut.transform(_c.value);
+        return AnimatedContainer(
+          duration: Dur.base,
           width: widget.size,
           height: widget.size,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: context.pal.surface,
+            boxShadow: [
+              if (widget.glow && !reduce)
+                BoxShadow(
+                  color: widget.color.withValues(alpha: 0.22 + 0.22 * v),
+                  blurRadius: 32 + 30 * v,
+                  spreadRadius: 2 + 10 * v,
+                ),
+            ],
             border: Border.all(
               color: widget.color.withValues(alpha: alpha),
               width: widget.thickness,
@@ -254,6 +280,188 @@ class _StatusRingState extends State<StatusRing> with SingleTickerProviderStateM
       },
     );
   }
+}
+
+/// Entrada suave: o conteúdo sobe 18 px e aparece. [delay] escalona os blocos.
+class Rise extends StatelessWidget {
+  const Rise({super.key, required this.child, this.delay = Duration.zero});
+
+  final Widget child;
+  final Duration delay;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) return child;
+    const run = Duration(milliseconds: 420);
+    final total = run + delay;
+    final start = delay.inMilliseconds / total.inMilliseconds;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: total,
+      curve: Interval(start, 1, curve: Curves.easeOutCubic),
+      child: child,
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(
+          offset: Offset(0, 18 * (1 - t)),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// Arco laranja que gira devagar em volta do piloto em destaque: sala "viva".
+class SweepHalo extends StatefulWidget {
+  const SweepHalo({
+    super.key,
+    required this.color,
+    required this.size,
+    required this.child,
+  });
+
+  final Color color;
+  final double size;
+  final Widget child;
+
+  @override
+  State<SweepHalo> createState() => _SweepHaloState();
+}
+
+class _SweepHaloState extends State<SweepHalo>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 6),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    return SizedBox.square(
+      dimension: widget.size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (!reduce)
+            ExcludeSemantics(
+              child: RepaintBoundary(
+                child: AnimatedBuilder(
+                  animation: _c,
+                  builder: (context, _) => CustomPaint(
+                    size: Size.square(widget.size),
+                    painter: _SweepPainter(_c.value, widget.color),
+                  ),
+                ),
+              ),
+            ),
+          widget.child,
+        ],
+      ),
+    );
+  }
+}
+
+class _SweepPainter extends CustomPainter {
+  _SweepPainter(this.t, this.color);
+
+  final double t;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6
+      ..shader = SweepGradient(
+        colors: [
+          color.withValues(alpha: 0),
+          color.withValues(alpha: 0),
+          color.withValues(alpha: 0.6),
+        ],
+        stops: const [0, 0.68, 1],
+        transform: GradientRotation(t * 2 * math.pi),
+      ).createShader(rect);
+    canvas.drawCircle(rect.center, size.shortestSide / 2 - 4, paint);
+  }
+
+  @override
+  bool shouldRepaint(_SweepPainter old) => old.t != t || old.color != color;
+}
+
+/// Ondas de radar: três anéis que se expandem enquanto o app procura salas.
+class RadarPulse extends StatefulWidget {
+  const RadarPulse({super.key, required this.color, this.size = 220});
+
+  final Color color;
+  final double size;
+
+  @override
+  State<RadarPulse> createState() => _RadarPulseState();
+}
+
+class _RadarPulseState extends State<RadarPulse>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 3),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExcludeSemantics(
+      child: RepaintBoundary(
+        child: AnimatedBuilder(
+          animation: _c,
+          builder: (context, _) => CustomPaint(
+            size: Size.square(widget.size),
+            painter: _RadarPainter(_c.value, widget.color),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RadarPainter extends CustomPainter {
+  _RadarPainter(this.t, this.color);
+
+  final double t;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final maxR = size.shortestSide / 2;
+    for (var i = 0; i < 3; i++) {
+      final p = (t + i / 3) % 1.0;
+      canvas.drawCircle(
+        center,
+        maxR * (0.2 + 0.8 * p),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2
+          ..color = color.withValues(alpha: 0.85 * (1 - p)),
+      );
+    }
+    canvas.drawCircle(center, 7, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(_RadarPainter old) => old.t != t || old.color != color;
 }
 
 /// Quatro barras de qualidade do link, sempre com rótulo textual ao lado.
@@ -291,7 +499,11 @@ class LinkBars extends StatelessWidget {
 
 /// Cartão padrão.
 class Panel extends StatelessWidget {
-  const Panel({super.key, required this.child, this.padding = const EdgeInsets.all(Sp.md)});
+  const Panel({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(Sp.md),
+  });
 
   final Widget child;
   final EdgeInsets padding;

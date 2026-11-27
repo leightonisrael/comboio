@@ -6,19 +6,31 @@ import 'package:comboio/core/signaling_client.dart';
 import 'package:comboio/core/signaling_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-PeerInfo pilot(String id, String name) => PeerInfo(id: id, name: name, color: 0);
+PeerInfo pilot(String id, String name) =>
+    PeerInfo(id: id, name: name, color: 0);
 
-Future<Map<String, dynamic>> nextOf(Stream<Map<String, dynamic>> s, String type) =>
-    s.firstWhere((m) => m['t'] == type).timeout(const Duration(seconds: 3));
+Future<Map<String, dynamic>> nextOf(
+  Stream<Map<String, dynamic>> s,
+  String type,
+) => s.firstWhere((m) => m['t'] == type).timeout(const Duration(seconds: 3));
 
 void main() {
   group('tuneOpus', () {
-    const base = 'v=0\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111 63\r\n'
+    const base =
+        'v=0\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111 63\r\n'
         'a=rtpmap:111 opus/48000/2\r\n';
 
     test('acrescenta parâmetros ao fmtp existente sem duplicar', () {
-      final out = tuneOpus('${base}a=fmtp:111 minptime=10;useinbandfec=1\r\n', 24000);
-      expect(out, contains('a=fmtp:111 minptime=10;usedtx=1;useinbandfec=1;maxaveragebitrate=24000;stereo=0\r\n'));
+      final out = tuneOpus(
+        '${base}a=fmtp:111 minptime=10;useinbandfec=1\r\n',
+        24000,
+      );
+      expect(
+        out,
+        contains(
+          'a=fmtp:111 minptime=10;usedtx=1;useinbandfec=1;maxaveragebitrate=24000;stereo=0\r\n',
+        ),
+      );
       expect('useinbandfec'.allMatches(out).length, 1);
     });
 
@@ -46,14 +58,24 @@ void main() {
     late SignalingHost host;
 
     setUp(() async {
-      host = SignalingHost(self: pilot('h', 'Host'), pin: '111222', roomName: 'Sala', port: 0);
+      host = SignalingHost(
+        self: pilot('h', 'Host'),
+        pin: '111222',
+        roomName: 'Sala',
+        port: 0,
+      );
       await host.start();
     });
 
     tearDown(() => host.close());
 
-    Future<SignalingClient> join(String id, {String pin = '111222'}) => SignalingClient.connect(
-        host: '127.0.0.1', port: host.boundPort, self: pilot(id, 'P$id'), pin: pin);
+    Future<SignalingClient> join(String id, {String pin = '111222'}) =>
+        SignalingClient.connect(
+          host: '127.0.0.1',
+          port: host.boundPort,
+          self: pilot(id, 'P$id'),
+          pin: pin,
+        );
 
     test('/info anuncia a sala', () async {
       final ad = await probe('127.0.0.1', port: host.boundPort);
@@ -80,7 +102,10 @@ void main() {
 
     test('cinco PINs errados bloqueiam novas tentativas', () async {
       for (var i = 0; i < 5; i++) {
-        await expectLater(join('x$i', pin: '000000'), throwsA(isA<JoinError>()));
+        await expectLater(
+          join('x$i', pin: '000000'),
+          throwsA(isA<JoinError>()),
+        );
       }
       await expectLater(
         join('a'),
@@ -130,7 +155,9 @@ void main() {
     test('reentrada do mesmo piloto não gera saída falsa', () async {
       final a1 = await join('a');
       final left = <Map<String, dynamic>>[];
-      final sub = host.messages.where((m) => m['t'] == 'peer-left').listen(left.add);
+      final sub = host.messages
+          .where((m) => m['t'] == 'peer-left')
+          .listen(left.add);
       final a2 = await join('a');
       await Future<void>.delayed(const Duration(milliseconds: 200));
       expect(left, isEmpty);

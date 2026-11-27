@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import 'app.dart';
@@ -19,5 +19,12 @@ Future<void> main() async {
   platform.init();
   final room = RoomController(settings, feedback, platform);
 
-  runApp(ComboioApp(settings: settings, room: room, feedback: feedback, platform: platform));
+  runApp(
+    ComboioApp(
+      settings: settings,
+      room: room,
+      feedback: feedback,
+      platform: platform,
+    ),
+  );
 }

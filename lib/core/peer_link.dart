@@ -62,7 +62,12 @@ class PeerLink {
     conn.onIceCandidate = (c) {
       final cand = c.candidate;
       if (cand == null || cand.isEmpty) return;
-      sendSignal({'t': 'candidate', 'to': remoteId, 'sid': sid, 'cand': c.toMap()});
+      sendSignal({
+        't': 'candidate',
+        'to': remoteId,
+        'sid': sid,
+        'cand': c.toMap(),
+      });
     };
     conn.onTrack = (e) {
       if (e.track.kind == 'audio') remoteTrack = e.track;
@@ -104,7 +109,9 @@ class PeerLink {
     await ready;
     final conn = pc;
     if (conn == null) return;
-    await conn.setRemoteDescription(RTCSessionDescription(tuneOpus(sdp, bitrate), 'offer'));
+    await conn.setRemoteDescription(
+      RTCSessionDescription(tuneOpus(sdp, bitrate), 'offer'),
+    );
     await _flushCandidates();
     final answer = await conn.createAnswer({});
     await conn.setLocalDescription(answer);
@@ -115,7 +122,9 @@ class PeerLink {
     await ready;
     final conn = pc;
     if (conn == null) return;
-    await conn.setRemoteDescription(RTCSessionDescription(tuneOpus(sdp, bitrate), 'answer'));
+    await conn.setRemoteDescription(
+      RTCSessionDescription(tuneOpus(sdp, bitrate), 'answer'),
+    );
     await _flushCandidates();
   }
 
@@ -146,9 +155,15 @@ class PeerLink {
 
   void heartbeat({required bool tx, required bool muted}) {
     final ch = _ctl;
-    if (ch == null || ch.state != RTCDataChannelState.RTCDataChannelOpen) return;
+    if (ch == null || ch.state != RTCDataChannelState.RTCDataChannelOpen) {
+      return;
+    }
     try {
-      ch.send(RTCDataChannelMessage(jsonEncode({'seq': _seq++, 'tx': tx, 'muted': muted})));
+      ch.send(
+        RTCDataChannelMessage(
+          jsonEncode({'seq': _seq++, 'tx': tx, 'muted': muted}),
+        ),
+      );
     } catch (_) {}
   }
 
@@ -156,7 +171,9 @@ class PeerLink {
     final seen = lastSeen;
     final now = DateTime.now();
     if (seen == null) {
-      return now.difference(created).inSeconds < 8 ? LinkState.connecting : LinkState.lost;
+      return now.difference(created).inSeconds < 8
+          ? LinkState.connecting
+          : LinkState.lost;
     }
     final ms = now.difference(seen).inMilliseconds;
     if (ms < 1500) return LinkState.connected;

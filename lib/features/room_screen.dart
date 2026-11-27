@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../app.dart';
 import '../core/peer_link.dart';
@@ -27,12 +27,18 @@ class RoomScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(room.isHost ? 'ENCERRAR A SALA?' : 'SAIR DA SALA?',
-                  textAlign: TextAlign.center, style: Ty.headline.copyWith(color: p.text)),
+              Text(
+                room.isHost ? 'ENCERRAR A SALA?' : 'SAIR DA SALA?',
+                textAlign: TextAlign.center,
+                style: Ty.headline.copyWith(color: p.text),
+              ),
               if (room.isHost) ...[
                 const SizedBox(height: Sp.sm),
-                Text('Todos os pilotos serão desconectados.',
-                    textAlign: TextAlign.center, style: Ty.body.copyWith(color: p.textDim)),
+                Text(
+                  'Todos os pilotos serão desconectados.',
+                  textAlign: TextAlign.center,
+                  style: Ty.body.copyWith(color: p.textDim),
+                ),
               ],
               const SizedBox(height: Sp.lg),
               BigButton(
@@ -82,7 +88,8 @@ class RoomScreen extends StatelessWidget {
                       const SizedBox(height: Sp.sm),
                       HelmetChip(
                         status: room.helmet,
-                        onTap: () => Deps.of(context).platform.openSettings('bluetooth'),
+                        onTap: () =>
+                            Deps.of(context).platform.openSettings('bluetooth'),
                       ),
                     ],
                     if (room.phase == RoomPhase.reconnecting) ...[
@@ -96,17 +103,28 @@ class RoomScreen extends StatelessWidget {
                     const SizedBox(height: Sp.md),
                     Expanded(
                       child: room.phase == RoomPhase.starting
-                          ? Center(child: CircularProgressIndicator(color: p.accent))
+                          ? Center(
+                              child: CircularProgressIndicator(color: p.accent),
+                            )
                           : pilots.isEmpty
-                              ? _Waiting(room: room)
-                              : _PilotArea(pilots: pilots),
+                          ? _Waiting(room: room)
+                          : _PilotArea(pilots: pilots),
                     ),
                     const SizedBox(height: Sp.md),
-                    _SelfBar(room: room),
+                    Rise(
+                      delay: const Duration(milliseconds: 120),
+                      child: _SelfBar(room: room),
+                    ),
                     const SizedBox(height: Sp.md),
-                    _VolumeRow(room: room),
+                    Rise(
+                      delay: const Duration(milliseconds: 200),
+                      child: _VolumeRow(room: room),
+                    ),
                     const SizedBox(height: Sp.md),
-                    _Controls(room: room),
+                    Rise(
+                      delay: const Duration(milliseconds: 280),
+                      child: _Controls(room: room),
+                    ),
                   ],
                 ),
               );
@@ -155,10 +173,12 @@ class _Header extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(room.roomName.toUpperCase(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Ty.title.copyWith(color: p.text)),
+              Text(
+                room.roomName.toUpperCase(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Ty.title.copyWith(color: p.text),
+              ),
               Text(
                 room.isHost ? 'PIN ${room.pin}' : 'Conectado como convidado',
                 style: Ty.label.copyWith(color: p.textDim),
@@ -169,10 +189,14 @@ class _Header extends StatelessWidget {
         IconButton(
           tooltip: 'Configurações',
           iconSize: 30,
-          constraints: const BoxConstraints(minWidth: Touch.min, minHeight: Touch.min),
+          constraints: const BoxConstraints(
+            minWidth: Touch.min,
+            minHeight: Touch.min,
+          ),
           icon: Icon(Icons.settings_rounded, color: p.text),
-          onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen())),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+          ),
         ),
       ],
     );
@@ -190,14 +214,23 @@ class _Banner extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.pal;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Sp.md, vertical: Sp.sm + Sp.xs),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(Rd.sm)),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Sp.md,
+        vertical: Sp.sm + Sp.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(Rd.sm),
+      ),
       child: Row(
         children: [
           Icon(icon, size: 28, color: p.onAccent),
           const SizedBox(width: Sp.sm + Sp.xs),
           Expanded(
-            child: Text(text, style: Ty.button.copyWith(color: p.onAccent, fontSize: 19)),
+            child: Text(
+              text,
+              style: Ty.button.copyWith(color: p.onAccent, fontSize: 19),
+            ),
           ),
         ],
       ),
@@ -216,7 +249,10 @@ class _Waiting extends StatelessWidget {
     final p = context.pal;
     if (!room.isHost) {
       return Center(
-        child: Text('Conectando aos pilotos…', style: Ty.title.copyWith(color: p.textDim)),
+        child: Text(
+          'Conectando aos pilotos…',
+          style: Ty.title.copyWith(color: p.textDim),
+        ),
       );
     }
     final ips = room.localIps;
@@ -225,13 +261,20 @@ class _Waiting extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Text('AGUARDANDO PILOTOS', style: Ty.title.copyWith(color: p.textDim)),
+            Text(
+              'AGUARDANDO PILOTOS',
+              style: Ty.title.copyWith(color: p.textDim),
+            ),
             const SizedBox(height: Sp.md),
             Text('PIN DA SALA', style: Ty.label.copyWith(color: p.textDim)),
             FittedBox(
               child: Text(
                 '${room.pin.substring(0, 3)} ${room.pin.substring(3)}',
-                style: Ty.display.copyWith(color: p.accentText, fontSize: 72, letterSpacing: 4),
+                style: Ty.display.copyWith(
+                  color: p.accentText,
+                  fontSize: 72,
+                  letterSpacing: 4,
+                ),
               ),
             ),
             const SizedBox(height: Sp.md),
@@ -249,7 +292,8 @@ class _Waiting extends StatelessWidget {
                 label: 'Abrir hotspot',
                 kind: BigButtonKind.quiet,
                 height: Touch.min,
-                onPressed: () => Deps.of(context).platform.openSettings('hotspot'),
+                onPressed: () =>
+                    Deps.of(context).platform.openSettings('hotspot'),
               ),
             ] else ...[
               Text(
@@ -279,7 +323,9 @@ class _PilotArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pilots.length == 1) {
-      return Center(child: SingleChildScrollView(child: _PilotHero(view: pilots.first)));
+      return Center(
+        child: SingleChildScrollView(child: _PilotHero(view: pilots.first)),
+      );
     }
     return GridView.count(
       crossAxisCount: 2,
@@ -317,24 +363,36 @@ class _PilotHero extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        StatusRing(
-          color: look.color,
-          pulseHz: look.pulse,
-          size: 200,
-          thickness: 8,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              VoiceWave(level: view.level, color: own, active: view.talking, height: 56),
-              const SizedBox(height: Sp.sm),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Sp.lg),
-                child: Text(view.info.name.toUpperCase(),
+        SweepHalo(
+          color: p.accent,
+          size: 232,
+          child: StatusRing(
+            color: look.color,
+            pulseHz: look.pulse,
+            glow: view.talking,
+            size: 200,
+            thickness: 8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VoiceWave(
+                  level: view.level,
+                  color: own,
+                  active: view.talking,
+                  height: 56,
+                ),
+                const SizedBox(height: Sp.sm),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Sp.lg),
+                  child: Text(
+                    view.info.name.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Ty.headline.copyWith(color: p.text)),
-              ),
-            ],
+                    style: Ty.headline.copyWith(color: p.text),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: Sp.md),
@@ -345,7 +403,10 @@ class _PilotHero extends StatelessWidget {
           children: [
             LinkBars(quality: view.quality, color: look.color),
             const SizedBox(width: Sp.sm),
-            Text('LINK ${view.quality}/4', style: Ty.label.copyWith(color: p.textDim)),
+            Text(
+              'LINK ${view.quality}/4',
+              style: Ty.label.copyWith(color: p.textDim),
+            ),
           ],
         ),
       ],
@@ -375,15 +436,19 @@ class _PilotCard extends StatelessWidget {
         children: [
           VoiceWave(level: view.level, color: own, active: view.talking),
           const SizedBox(height: Sp.sm),
-          Text(view.info.name.toUpperCase(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Ty.title.copyWith(color: p.text)),
+          Text(
+            view.info.name.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Ty.title.copyWith(color: p.text),
+          ),
           const SizedBox(height: Sp.xs),
-          Text(look.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Ty.label.copyWith(color: look.color)),
+          Text(
+            look.label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Ty.label.copyWith(color: look.color),
+          ),
           const SizedBox(height: Sp.sm),
           LinkBars(quality: view.quality, color: look.color),
         ],
@@ -411,28 +476,37 @@ class _SelfBar extends StatelessWidget {
       status = 'TRANSMITINDO';
       color = p.live;
     } else {
-      status = room.mode == TalkMode.ptt ? 'SEGURE PARA FALAR' : 'AGUARDANDO VOZ';
+      status = room.mode == TalkMode.ptt
+          ? 'SEGURE PARA FALAR'
+          : 'AGUARDANDO VOZ';
       color = p.textDim;
     }
     return Panel(
-      padding: const EdgeInsets.symmetric(horizontal: Sp.md, vertical: Sp.sm + Sp.xs),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Sp.md,
+        vertical: Sp.sm + Sp.xs,
+      ),
       child: Row(
         children: [
           Container(
             width: 16,
             height: 16,
-            decoration:
-                BoxDecoration(color: pilotColor(settings.colorIndex), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: pilotColor(settings.colorIndex),
+              shape: BoxShape.circle,
+            ),
           ),
           const SizedBox(width: Sp.sm + Sp.xs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('VOCÊ · ${settings.name}'.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Ty.label.copyWith(color: p.textDim)),
+                Text(
+                  'VOCÊ · ${settings.name}'.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Ty.label.copyWith(color: p.textDim),
+                ),
                 Text(status, style: Ty.title.copyWith(color: color)),
               ],
             ),
@@ -468,7 +542,8 @@ class _VolumeRow extends StatelessWidget {
               min: 0,
               max: 1,
               divisions: 10,
-              semanticFormatterCallback: (v) => 'Volume ${(v * 100).round()} por cento',
+              semanticFormatterCallback: (v) =>
+                  'Volume ${(v * 100).round()} por cento',
               onChanged: room.setVolume,
             ),
           ),
@@ -519,7 +594,10 @@ class _Controls extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('MODO', style: Ty.label.copyWith(color: p.textDim)),
-                    Text(room.mode.label, style: Ty.button.copyWith(color: p.accentText)),
+                    Text(
+                      room.mode.label,
+                      style: Ty.button.copyWith(color: p.accentText),
+                    ),
                   ],
                 ),
               ),
@@ -536,7 +614,13 @@ class _Controls extends StatelessWidget {
           _PttButton(room: room),
           const SizedBox(height: Sp.md),
         ],
-        Row(children: [modeButton, const SizedBox(width: Sp.md), mute]),
+        Row(
+          children: [
+            modeButton,
+            const SizedBox(width: Sp.md),
+            mute,
+          ],
+        ),
       ],
     );
   }
@@ -572,10 +656,18 @@ class _PttButton extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.mic_rounded, size: 48, color: down ? p.onAccent : p.accentText),
+                Icon(
+                  Icons.mic_rounded,
+                  size: 48,
+                  color: down ? p.onAccent : p.accentText,
+                ),
                 const SizedBox(height: Sp.sm),
-                Text(down ? 'FALANDO' : 'SEGURE PARA FALAR',
-                    style: Ty.headline.copyWith(color: down ? p.onAccent : p.text)),
+                Text(
+                  down ? 'FALANDO' : 'SEGURE PARA FALAR',
+                  style: Ty.headline.copyWith(
+                    color: down ? p.onAccent : p.text,
+                  ),
+                ),
               ],
             ),
           ),

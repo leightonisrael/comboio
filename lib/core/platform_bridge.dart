@@ -8,11 +8,12 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 /// Estado do capacete Bluetooth. `known == false` quando a plataforma não informa.
 class HelmetStatus {
-  const HelmetStatus({required this.known, required this.connected, required this.name});
-  const HelmetStatus.unknown()
-      : known = false,
-        connected = false,
-        name = '';
+  const HelmetStatus({
+    required this.known,
+    required this.connected,
+    required this.name,
+  });
+  const HelmetStatus.unknown() : known = false, connected = false, name = '';
 
   final bool known;
   final bool connected;
@@ -28,7 +29,8 @@ class PlatformBridge {
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'comboio_conversa',
         channelName: 'Conversa ativa',
-        channelDescription: 'Mantém a conversa funcionando com a tela bloqueada.',
+        channelDescription:
+            'Mantém a conversa funcionando com a tela bloqueada.',
         onlyAlertOnce: true,
       ),
       iosNotificationOptions: const IOSNotificationOptions(
@@ -80,16 +82,20 @@ class PlatformBridge {
   Future<void> configureAudio() async {
     try {
       if (Platform.isAndroid) {
-        await Helper.setAndroidAudioConfiguration(AndroidAudioConfiguration.communication);
+        await Helper.setAndroidAudioConfiguration(
+          AndroidAudioConfiguration.communication,
+        );
       } else if (Platform.isIOS) {
-        await Helper.setAppleAudioConfiguration(AppleAudioConfiguration(
-          appleAudioCategory: AppleAudioCategory.playAndRecord,
-          appleAudioCategoryOptions: {
-            AppleAudioCategoryOption.allowBluetooth,
-            AppleAudioCategoryOption.mixWithOthers,
-          },
-          appleAudioMode: AppleAudioMode.voiceChat,
-        ));
+        await Helper.setAppleAudioConfiguration(
+          AppleAudioConfiguration(
+            appleAudioCategory: AppleAudioCategory.playAndRecord,
+            appleAudioCategoryOptions: {
+              AppleAudioCategoryOption.allowBluetooth,
+              AppleAudioCategoryOption.mixWithOthers,
+            },
+            appleAudioMode: AppleAudioMode.voiceChat,
+          ),
+        );
       }
     } catch (_) {}
   }

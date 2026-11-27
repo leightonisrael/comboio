@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../app.dart';
 import '../core/settings_store.dart';
@@ -30,7 +30,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _name ??= TextEditingController(text: s.name);
     final p = context.pal;
     return Scaffold(
-      appBar: AppBar(title: const Text('CONFIGURAÇÕES'), toolbarHeight: Touch.min),
+      appBar: AppBar(
+        title: const Text('CONFIGURAÇÕES'),
+        toolbarHeight: Touch.min,
+      ),
       body: ListenableBuilder(
         listenable: Listenable.merge([s, room]),
         builder: (context, _) => ListView(
@@ -47,14 +50,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: Ty.title.copyWith(color: p.text),
                 decoration: InputDecoration(
                   counterText: '',
-                  helperText: room.inRoom ? 'Saia da sala para trocar o nome.' : null,
+                  helperText: room.inRoom
+                      ? 'Saia da sala para trocar o nome.'
+                      : null,
                 ),
                 onChanged: (v) => s.name = v,
               ),
               const SizedBox(height: Sp.md),
               Text('Cor', style: Ty.label.copyWith(color: p.textDim)),
               const SizedBox(height: Sp.sm),
-              ColorPickerRow(selected: s.colorIndex, onChanged: (i) => s.colorIndex = i),
+              ColorPickerRow(
+                selected: s.colorIndex,
+                onChanged: (i) => s.colorIndex = i,
+              ),
             ]),
             _Section('VOZ', [
               Text('Modo de fala', style: Ty.label.copyWith(color: p.textDim)),
@@ -69,19 +77,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (m) => room.inRoom ? room.setMode(m) : s.mode = m,
               ),
               const SizedBox(height: Sp.sm),
-              Text(
-                switch (s.mode) {
-                  TalkMode.open => 'Microfone sempre aberto. O mais simples e confiável.',
-                  TalkMode.vox =>
-                    'Só transmite quando você fala. Ajuste a sensibilidade com a moto andando.',
-                  TalkMode.ptt => 'Só transmite enquanto você segura o botão na tela.',
-                },
-                style: Ty.body.copyWith(color: p.textDim),
-              ),
+              Text(switch (s.mode) {
+                TalkMode.open =>
+                  'Microfone sempre aberto. O mais simples e confiável.',
+                TalkMode.vox =>
+                  'Só transmite quando você fala. Ajuste a sensibilidade com a moto andando.',
+                TalkMode.ptt =>
+                  'Só transmite enquanto você segura o botão na tela.',
+              }, style: Ty.body.copyWith(color: p.textDim)),
               const SizedBox(height: Sp.md),
-              Text('Sensibilidade do VOX', style: Ty.label.copyWith(color: p.textDim)),
+              Text(
+                'Sensibilidade do VOX',
+                style: Ty.label.copyWith(color: p.textDim),
+              ),
               const SizedBox(height: Sp.sm),
-              _VoxMeter(level: room.inRoom ? room.localLevel : 0, threshold: s.voxThreshold),
+              _VoxMeter(
+                level: room.inRoom ? room.localLevel : 0,
+                threshold: s.voxThreshold,
+              ),
               SizedBox(
                 height: Touch.min,
                 child: Slider(
@@ -95,14 +108,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Menos sensível', style: Ty.label.copyWith(color: p.textDim)),
-                  Text('Mais sensível', style: Ty.label.copyWith(color: p.textDim)),
+                  Text(
+                    'Menos sensível',
+                    style: Ty.label.copyWith(color: p.textDim),
+                  ),
+                  Text(
+                    'Mais sensível',
+                    style: Ty.label.copyWith(color: p.textDim),
+                  ),
                 ],
               ),
               if (!room.inRoom) ...[
                 const SizedBox(height: Sp.sm),
-                Text('O medidor ao vivo aparece durante uma conversa.',
-                    style: Ty.label.copyWith(color: p.textDim)),
+                Text(
+                  'O medidor ao vivo aparece durante uma conversa.',
+                  style: Ty.label.copyWith(color: p.textDim),
+                ),
               ],
             ]),
             _Section('ÁUDIO', [
@@ -110,11 +131,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: Sp.sm),
               _Choice<int>(
                 value: s.bitrate,
-                options: const {16000: 'ECONÔMICA', 24000: 'PADRÃO', 32000: 'ALTA'},
+                options: const {
+                  16000: 'ECONÔMICA',
+                  24000: 'PADRÃO',
+                  32000: 'ALTA',
+                },
                 onChanged: (b) => s.bitrate = b,
               ),
               const SizedBox(height: Sp.sm),
-              Text('Vale a partir da próxima conexão.', style: Ty.label.copyWith(color: p.textDim)),
+              Text(
+                'Vale a partir da próxima conexão.',
+                style: Ty.label.copyWith(color: p.textDim),
+              ),
               _Toggle(
                 label: 'Avisos por voz no capacete',
                 value: s.voiceAlerts,
@@ -149,9 +177,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('PIN das suas salas', style: Ty.label.copyWith(color: p.textDim)),
-                        Text('${s.pin.substring(0, 3)} ${s.pin.substring(3)}',
-                            style: Ty.headline.copyWith(color: p.text, letterSpacing: 2)),
+                        Text(
+                          'PIN das suas salas',
+                          style: Ty.label.copyWith(color: p.textDim),
+                        ),
+                        Text(
+                          '${s.pin.substring(0, 3)} ${s.pin.substring(3)}',
+                          style: Ty.headline.copyWith(
+                            color: p.text,
+                            letterSpacing: 2,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -181,7 +217,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ]),
             const SizedBox(height: Sp.md),
-            Text('Comboio 0.1.0', textAlign: TextAlign.center, style: Ty.label.copyWith(color: p.textDim)),
+            Text(
+              'Comboio 0.1.0',
+              textAlign: TextAlign.center,
+              style: Ty.label.copyWith(color: p.textDim),
+            ),
             const SizedBox(height: Sp.lg),
           ],
         ),
@@ -205,10 +245,16 @@ class _Section extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: Sp.xs, bottom: Sp.sm),
-            child: Text(title, style: Ty.title.copyWith(color: context.pal.accentText)),
+            child: Text(
+              title,
+              style: Ty.title.copyWith(color: context.pal.accentText),
+            ),
           ),
           Panel(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: children,
+            ),
           ),
         ],
       ),
@@ -218,7 +264,11 @@ class _Section extends StatelessWidget {
 
 /// Seletor segmentado com alvos de 64 dp.
 class _Choice<T> extends StatelessWidget {
-  const _Choice({required this.value, required this.options, required this.onChanged});
+  const _Choice({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
 
   final T value;
   final Map<T, String> options;
@@ -250,7 +300,9 @@ class _Choice<T> extends StatelessWidget {
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: Sp.sm),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Sp.sm,
+                              ),
                               child: Text(
                                 e.value,
                                 style: Ty.button.copyWith(
@@ -274,7 +326,11 @@ class _Choice<T> extends StatelessWidget {
 }
 
 class _Toggle extends StatelessWidget {
-  const _Toggle({required this.label, required this.value, required this.onChanged});
+  const _Toggle({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
 
   final String label;
   final bool value;
@@ -290,7 +346,9 @@ class _Toggle extends StatelessWidget {
           height: Touch.min,
           child: Row(
             children: [
-              Expanded(child: Text(label, style: Ty.body.copyWith(color: p.text))),
+              Expanded(
+                child: Text(label, style: Ty.body.copyWith(color: p.text)),
+              ),
               Switch(value: value, onChanged: onChanged),
             ],
           ),
@@ -334,7 +392,12 @@ class _VoxMeter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              Positioned(left: th - 2, top: 0, bottom: 0, child: Container(width: 4, color: p.accent)),
+              Positioned(
+                left: th - 2,
+                top: 0,
+                bottom: 0,
+                child: Container(width: 4, color: p.accent),
+              ),
             ],
           ),
         );
