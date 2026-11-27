@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dois pilotos ligados por voz: ponto laranja, duas ondas, ponto verde. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FF8A00" android:pathData="M35,54m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0"/>
+    <path
+        android:pathData="M44.9,44.1A14,14 0 0 1 44.9,63.9"
+        android:strokeColor="#FF8A00"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M53.4,35.6A26,26 0 0 1 53.4,72.4"
+        android:strokeColor="#FF8A00"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"/>
+    <path android:fillColor="#2EE86B" android:pathData="M75,54m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0"/>
+</vector>

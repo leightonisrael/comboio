@@ -1,0 +1,42 @@
+name: iOS (IPA sem assinatura)
+
+# Fase 1: gera um .ipa sem assinatura para instalar com Sideloadly ou AltStore
+# a partir de um PC com Windows. Ver docs/03-build-e-instalacao.md.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-unsigned-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Compilar sem assinatura
+        run: flutter build ios --release --no-codesign --build-number=${{ github.run_number }}
+
+      - name: Empacotar o .ipa
+        run: |
+          mkdir -p out/Payload
+          cp -R build/ios/iphoneos/Runner.app out/Payload/
+          cd out
+          zip -qry comboio-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: comboio-ios-unsigned
+          path: out/comboio-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30

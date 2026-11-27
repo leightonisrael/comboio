@@ -1,0 +1,129 @@
+name: Release (APK + IPA)
+
+# Ao criar uma tag v* (ex.: v0.1.0), compila Android e iOS e publica os dois
+# arquivos na página de Releases do repositório.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag já existente para (re)publicar, ex.: v0.1.0'
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter test
+
+      - name: Preparar chave de assinatura
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::Segredos de assinatura ausentes. APK assinado com chave de depuração."
+            exit 0
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/comboio-release.jks
+          {
+            echo "storeFile=comboio-release.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/key.properties
+
+      # Um APK por arquitetura: o arm64 serve a praticamente todo celular atual
+      # e tem um terço do tamanho do APK universal.
+      - run: flutter build apk --release --split-per-abi --build-number=${{ github.run_number }}
+      - run: |
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "comboio-${TAG}.apk"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "comboio-${TAG}-celular-antigo-32bits.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: comboio-*.apk
+          if-no-files-found: error
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign --build-number=${{ github.run_number }}
+
+      - name: Empacotar o .ipa
+        run: |
+          mkdir -p out/Payload
+          cp -R build/ios/iphoneos/Runner.app out/Payload/
+          cd out
+          zip -qry "../comboio-${TAG}-unsigned.ipa" Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios
+          path: comboio-*-unsigned.ipa
+          if-no-files-found: error
+
+  publish:
+    # Publica o que tiver ficado pronto: se o iOS falhar, o APK sai mesmo assim.
+    needs: [android, ios]
+    if: ${{ !cancelled() && needs.android.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Criar ou atualizar a release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ls -la dist
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --title "Comboio $TAG" --notes \
+          "**Android:** baixe o \`.apk\` e instale (permita \"instalar apps desconhecidos\").
+          **iPhone:** baixe o \`.ipa\` e instale pelo PC com Sideloadly. Passo a passo em \`docs/03-build-e-instalacao.md\`.
+
+          Versão de teste: ainda não validada em aparelho."
+          fi
