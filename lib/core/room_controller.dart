@@ -50,6 +50,9 @@ class RoomController extends ChangeNotifier {
   List<String> localIps = const [];
 
   bool muted = false;
+
+  /// Fone mudo: para de ouvir os outros pilotos sem sair da sala.
+  bool deafened = false;
   bool pttDown = false;
   bool transmitting = false;
   double localLevel = 0;
@@ -193,6 +196,7 @@ class RoomController extends ChangeNotifier {
     await platform.routeToHelmet();
     await platform.keepScreenOn(settings.keepScreenOn);
     muted = false;
+    deafened = false;
     pttDown = false;
     _applyGate(force: true);
   }
@@ -422,7 +426,7 @@ class RoomController extends ChangeNotifier {
     if (_ticks % 8 == 0) {
       _refreshHelmet();
       // Conexões novas nascem no volume máximo: reaplica o escolhido.
-      if (volume < 0.999) setVolumeSilently();
+      if (volume < 0.999 || deafened) setVolumeSilently();
     }
     notifyListeners();
   }
@@ -519,8 +523,16 @@ class RoomController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleDeafen() {
+    deafened = !deafened;
+    setVolumeSilently();
+    feedback.say(deafened ? 'Fone mudo' : 'Fone aberto');
+    notifyListeners();
+  }
+
   void setVolume(double v) {
     volume = v;
+    deafened = false;
     setVolumeSilently();
     notifyListeners();
   }
@@ -528,7 +540,7 @@ class RoomController extends ChangeNotifier {
   void setVolumeSilently() {
     for (final link in _links.values) {
       final t = link.remoteTrack;
-      if (t != null) platform.setTrackVolume(t, volume);
+      if (t != null) platform.setTrackVolume(t, deafened ? 0 : volume);
     }
   }
 

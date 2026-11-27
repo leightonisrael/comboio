@@ -526,10 +526,34 @@ class _VolumeRow extends StatelessWidget {
       height: Touch.min,
       child: Row(
         children: [
-          Icon(Icons.volume_down_rounded, size: 28, color: p.text),
+          Semantics(
+            button: true,
+            label: room.deafened
+                ? 'Fone mudo. Toque para voltar a ouvir.'
+                : 'Silenciar o fone',
+            child: Material(
+              color: room.deafened ? p.danger : p.surfaceHigh,
+              borderRadius: BorderRadius.circular(Rd.sm),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: room.toggleDeafen,
+                child: SizedBox(
+                  width: Touch.min,
+                  height: Touch.min,
+                  child: Icon(
+                    room.deafened
+                        ? Icons.volume_off_rounded
+                        : Icons.volume_down_rounded,
+                    size: 30,
+                    color: room.deafened ? p.onAccent : p.text,
+                  ),
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: Slider(
-              value: room.volume,
+              value: room.deafened ? 0 : room.volume,
               min: 0,
               max: 1,
               divisions: 10,

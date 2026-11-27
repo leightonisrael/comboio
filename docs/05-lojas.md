@@ -42,6 +42,7 @@ COMO FUNCIONA
 RECURSOS
 • Sem internet, sem chip, sem cadastro.
 • Botões grandes, feitos para usar de luva.
+• Mudo do microfone e mudo do fone, separados.
 • Três modos de fala: microfone aberto, ativação por voz (VOX) e apertar para falar (PTT).
 • Reconecta sozinho quando as motos se afastam e voltam.
 • Avisos por voz no capacete: quem conectou, quem saiu do alcance, quem voltou.
