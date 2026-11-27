@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comboio — intercomunicador de moto sem internet</title>
+<meta name="description" content="Converse de capacete a capacete usando o celular e o headset Bluetooth que você já tem. Funciona sem internet e sem sinal de operadora, pelo Wi-Fi ou hotspot dos celulares.">
+<meta property="og:title" content="Comboio — intercomunicador de moto sem internet">
+<meta property="og:description" content="Conversa de voz entre capacetes pelo Wi-Fi dos celulares. Sem internet, sem cadastro, sem servidor.">
+<meta property="og:image" content="https://leightonisrael.github.io/intercomunicador-v10/img/destaque.png">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="icon" href="img/icone.png">
+<style>
+@font-face{font-family:"Saira Condensed";src:url("fonts/SairaCondensed-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"Saira Condensed";src:url("fonts/SairaCondensed-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+:root{
+  --bg:#0A0B0D;--surface:#14161A;--high:#1E2127;--border:#2C3038;
+  --text:#FFFFFF;--dim:#C9CED6;--accent:#FF8A00;--on-accent:#0A0B0D;
+  --live:#2EE86B;--warn:#FFD60A;
+  --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+a:focus-visible,.btn:focus-visible{outline:3px solid var(--live);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;margin:0}
+h1{font-size:clamp(44px,8vw,84px)}
+h2{font-size:clamp(30px,4.5vw,44px);margin-bottom:12px}
+h3{font-size:24px;margin-bottom:6px}
+p{margin:0 0 14px;color:var(--dim)}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-size:16px;margin-bottom:10px}
+section{padding:72px 0;border-top:1px solid var(--border)}
+
+/* topo */
+header.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:26px;text-transform:uppercase;color:var(--text);text-decoration:none}
+.brand img{width:40px;height:40px;border-radius:10px}
+nav a{color:var(--dim);text-decoration:none;margin-left:22px;font-size:15px}
+nav a:hover{color:var(--text)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:40px 0 80px}
+.hero h1 span{color:var(--accent)}
+.hero .lead{font-size:20px;max-width:34em;margin-top:18px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 26px;border-radius:14px;font-family:var(--display);font-weight:700;font-size:20px;text-transform:uppercase;text-decoration:none;letter-spacing:.03em}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:var(--high);color:var(--text);border:1px solid var(--border)}
+.btn:hover{filter:brightness(1.1)}
+.note{font-size:14px;margin-top:12px}
+.phone{justify-self:center;width:min(300px,78vw);border-radius:34px;border:6px solid var(--high);box-shadow:0 0 0 1px var(--border),0 30px 80px rgba(255,138,0,.12);overflow:hidden}
+.phone img{display:block;width:100%;height:auto}
+
+/* diagrama */
+.link{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:10px;margin-top:28px;font-family:var(--display);font-weight:600;text-transform:uppercase;text-align:center}
+.node{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 10px;font-size:19px}
+.node small{display:block;font-family:var(--body);text-transform:none;font-weight:400;color:var(--dim);font-size:13px;margin-top:2px}
+.wire{color:var(--dim);font-size:13px;letter-spacing:.08em;white-space:nowrap}
+.wire b{display:block;height:3px;border-radius:2px;background:var(--border);margin-bottom:6px;min-width:44px}
+.wire.wifi{color:var(--live)}
+.wire.wifi b{background:var(--live)}
+
+/* passos */
+.steps{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+.steps li{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;counter-increment:s}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--display);font-weight:700;font-size:22px;margin-bottom:12px}
+.steps p{margin:0;font-size:16px}
+
+/* recursos */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px}
+.card p{margin:0;font-size:16px}
+.card h3{color:var(--text)}
+.card h3::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--live);margin-right:10px;vertical-align:middle}
+
+/* telas */
+.shots{display:flex;gap:18px;overflow-x:auto;padding:8px 2px 18px;margin-top:28px;scroll-snap-type:x mandatory}
+.shots figure{flex:0 0 220px;margin:0;scroll-snap-align:start}
+.shots img{display:block;width:100%;height:auto;border-radius:22px;border:1px solid var(--border)}
+.shots figcaption{font-size:14px;color:var(--dim);margin-top:8px;text-align:center}
+
+/* limites + privacidade */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+.two ul{margin:0;padding-left:20px;color:var(--dim)}
+.two li{margin-bottom:8px}
+.card.warn h3::before{background:var(--warn)}
+
+footer{border-top:1px solid var(--border);padding:32px 0 48px;font-size:14px;color:var(--dim)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between}
+footer a{color:var(--dim)}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;padding-top:16px}
+  .steps{grid-template-columns:1fr 1fr}
+  .grid,.two{grid-template-columns:1fr}
+  .link{grid-template-columns:1fr;gap:6px}
+  .wire b{width:3px;min-width:0;height:22px;margin:0 auto 4px}
+  nav a{margin-left:14px}
+  section{padding:52px 0}
+}
+@media (max-width:520px){.steps{grid-template-columns:1fr}nav a.opt{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><img src="img/icone.png" alt="">Comboio</a>
+    <nav>
+      <a href="#como">Como usar</a>
+      <a class="opt" href="#recursos">Recursos</a>
+      <a class="opt" href="#limites">Limites</a>
+      <a href="privacidade.html">Privacidade</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Intercomunicador para motociclistas</div>
+      <h1>Fale de capacete a capacete, <span>sem internet</span>.</h1>
+      <p class="lead">O Comboio usa o celular e o headset Bluetooth que você já tem. Os celulares conversam direto pelo Wi-Fi ou pelo hotspot de um deles: funciona na estrada, sem sinal de operadora.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.leightonisrael.comboio">Google Play</a>
+        <a class="btn ghost" href="https://apps.apple.com/app/id6840040174">App Store</a>
+      </div>
+      <p class="note">Gratuito, sem cadastro e sem anúncios. A versão 0.1.3 está em análise nas duas lojas; os links passam a funcionar assim que for aprovada.</p>
+    </div>
+    <div class="phone"><img src="img/1-sala.png" width="1080" height="2160" alt="Tela da sala do Comboio mostrando o piloto Léo falando, o volume e o botão de silenciar"></div>
+  </div>
+</div>
+
+<section id="ideia">
+  <div class="wrap">
+    <div class="eyebrow">A ideia</div>
+    <h2>Seu capacete já tem tudo o que precisa</h2>
+    <p>Serve qualquer headset Bluetooth de capacete, de qualquer marca, inclusive os genéricos que não têm intercom entre unidades. Basta ele funcionar para ligações telefônicas.</p>
+    <div class="link" role="img" aria-label="Capacete A ligado por Bluetooth ao celular A; celular A ligado por Wi-Fi local ao celular B; celular B ligado por Bluetooth ao capacete B">
+      <div class="node">Capacete A<small>seu headset</small></div>
+      <div class="wire"><b></b>Bluetooth</div>
+      <div class="node">Celular A<small>cria a sala</small></div>
+      <div class="wire wifi"><b></b>Wi-Fi local</div>
+      <div class="node">Celular B<small>entra na sala</small></div>
+      <div class="wire"><b></b>Bluetooth</div>
+      <div class="node">Capacete B<small>headset do amigo</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="wrap">
+    <div class="eyebrow">Como usar</div>
+    <h2>Quatro passos e pode guardar o celular</h2>
+    <ol class="steps">
+      <li><h3>Pareie</h3><p>Cada piloto pareia o capacete com o próprio celular, no Bluetooth do sistema.</p></li>
+      <li><h3>Crie a sala</h3><p>Um piloto liga o hotspot do celular, abre o Comboio e toca em Criar sala. Aparece um PIN.</p></li>
+      <li><h3>Entre</h3><p>O outro conecta nesse Wi-Fi, abre o Comboio e toca na sala. O PIN só é pedido na primeira vez.</p></li>
+      <li><h3>Rode</h3><p>A conversa segue com a tela bloqueada e reconecta sozinha quando as motos se afastam e voltam.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="recursos">
+  <div class="wrap">
+    <div class="eyebrow">Recursos</div>
+    <h2>Feito para usar de luva</h2>
+    <div class="grid">
+      <div class="card"><h3>Sem internet</h3><p>Nada passa por servidor. Funciona só com o hotspot de um celular, mesmo sem chip ou sem sinal.</p></div>
+      <div class="card"><h3>Grupo</h3><p>Mais de dois pilotos na mesma sala, todos ouvindo todos.</p></div>
+      <div class="card"><h3>Aberto ou apertar para falar</h3><p>Microfone sempre aberto, ou um botão grande de apertar para falar quando o vento atrapalha.</p></div>
+      <div class="card"><h3>Capacete ou alto-falante</h3><p>O som sai no headset. Um toque muda para o viva-voz do celular quando você para.</p></div>
+      <div class="card"><h3>Avisos por voz</h3><p>O app fala quando alguém entra, sai ou perde o sinal. Você não precisa olhar a tela.</p></div>
+      <div class="card"><h3>Android e iPhone</h3><p>Os dois sistemas conversam entre si na mesma sala.</p></div>
+    </div>
+    <div class="shots" tabindex="0" aria-label="Telas do aplicativo">
+      <figure><img src="img/2-home.png" width="1080" height="2160" loading="lazy" alt="Tela inicial com as salas encontradas na rede"><figcaption>Salas na rede</figcaption></figure>
+      <figure><img src="img/3-como-conectar.png" width="1080" height="2160" loading="lazy" alt="Tela que explica como conectar os celulares"><figcaption>Como conectar</figcaption></figure>
+      <figure><img src="img/1-sala.png" width="1080" height="2160" loading="lazy" alt="Sala com um piloto falando"><figcaption>Conversa a dois</figcaption></figure>
+      <figure><img src="img/4-grupo.png" width="1080" height="2160" loading="lazy" alt="Sala com vários pilotos"><figcaption>Grupo</figcaption></figure>
+      <figure><img src="img/5-ptt.png" width="1080" height="2160" loading="lazy" alt="Modo apertar para falar"><figcaption>Apertar para falar</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="wrap">
+    <div class="eyebrow">Sem enrolação</div>
+    <h2>O que esperar</h2>
+    <div class="two">
+      <div class="card warn">
+        <h3>Limites</h3>
+        <ul>
+          <li>O alcance é o do Wi-Fi entre os celulares: algumas dezenas de metros. É para piloto e garupa ou motos rodando próximas.</li>
+          <li>Durante a conversa, a música toca com qualidade de ligação. É uma limitação do Bluetooth dos capacetes.</li>
+          <li>Se o grupo se espalhar, a conversa cai e volta sozinha quando reaproximar.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Privacidade</h3>
+        <ul>
+          <li>O áudio vai direto de um celular para o outro, criptografado.</li>
+          <li>Nada é gravado e nada é enviado para a internet.</li>
+          <li>Sem cadastro, sem anúncios, sem rastreamento.</li>
+        </ul>
+        <p style="margin-top:12px"><a href="privacidade.html">Ler a política de privacidade</a></p>
+      </div>
+    </div>
+    <h3 style="margin-top:36px">Dicas para ir mais longe</h3>
+    <p>Deixe o hotspot em 2,4 GHz, tire o celular do bolso (o corpo bloqueia o sinal) e, em grupo, coloque quem cria a sala na moto do meio.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Comboio 0.1.3 · © 2026 Israel Leighton</span>
+    <span>
+      <a href="https://github.com/leightonisrael/intercomunicador-v10">Código no GitHub</a> ·
+      <a href="https://github.com/leightonisrael/intercomunicador-v10/issues">Suporte</a> ·
+      <a href="privacidade.html">Privacidade</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
