@@ -53,6 +53,9 @@ class RoomController extends ChangeNotifier {
 
   /// Fone mudo: para de ouvir os outros pilotos sem sair da sala.
   bool deafened = false;
+
+  /// Áudio saindo pelo alto-falante do celular em vez do capacete.
+  bool speaker = false;
   bool pttDown = false;
   bool transmitting = false;
   double localLevel = 0;
@@ -197,6 +200,7 @@ class RoomController extends ChangeNotifier {
     await platform.keepScreenOn(settings.keepScreenOn);
     muted = false;
     deafened = false;
+    speaker = false;
     pttDown = false;
     _applyGate(force: true);
   }
@@ -439,6 +443,7 @@ class RoomController extends ChangeNotifier {
       // Sem alerta na tela nem na voz: quando o capacete volta, só devolve o
       // áudio para ele.
       if (was.known && h.known && h.connected) {
+        speaker = false;
         await platform.routeToHelmet();
       }
     }
@@ -527,6 +532,13 @@ class RoomController extends ChangeNotifier {
     deafened = !deafened;
     setVolumeSilently();
     feedback.say(deafened ? 'Fone mudo' : 'Fone aberto');
+    notifyListeners();
+  }
+
+  void toggleSpeaker() {
+    speaker = !speaker;
+    platform.setSpeaker(speaker);
+    feedback.say(speaker ? 'Alto-falante' : 'Capacete');
     notifyListeners();
   }
 

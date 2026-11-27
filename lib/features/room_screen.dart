@@ -562,7 +562,29 @@ class _VolumeRow extends StatelessWidget {
               onChanged: room.setVolume,
             ),
           ),
-          Icon(Icons.volume_up_rounded, size: 28, color: p.text),
+          Semantics(
+            button: true,
+            label: room.speaker
+                ? 'Alto-falante ligado. Toque para voltar ao capacete.'
+                : 'Ouvir pelo alto-falante do celular',
+            child: Material(
+              color: room.speaker ? p.accent : p.surfaceHigh,
+              borderRadius: BorderRadius.circular(Rd.sm),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: room.toggleSpeaker,
+                child: SizedBox(
+                  width: Touch.min,
+                  height: Touch.min,
+                  child: Icon(
+                    Icons.volume_up_rounded,
+                    size: 30,
+                    color: room.speaker ? p.onAccent : p.text,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -107,6 +107,14 @@ class PlatformBridge {
     } catch (_) {}
   }
 
+  /// Alto-falante do celular (viva-voz) no lugar do capacete ou do fone de
+  /// ouvido da chamada.
+  Future<void> setSpeaker(bool on) async {
+    try {
+      await Helper.setSpeakerphoneOn(on);
+    } catch (_) {}
+  }
+
   Future<HelmetStatus> helmet() async {
     try {
       final r = await _channel.invokeMapMethod<String, dynamic>('getRoute');
