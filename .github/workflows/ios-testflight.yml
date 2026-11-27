@@ -39,8 +39,7 @@ jobs:
           fi
           mkdir -p "$RUNNER_TEMP/keys"
           if [ -n "$ASC_KEY_P8" ]; then
-            printf '%s
-' "$ASC_KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
+            echo "$ASC_KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
           else
             echo "$ASC_KEY_P8_BASE64" | base64 --decode > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
           fi
