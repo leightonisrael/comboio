@@ -2,9 +2,10 @@ name: iOS (TestFlight)
 
 # Fase 2: exige Apple Developer Program. Assinatura automática gerenciada pela
 # Apple, usando uma chave da App Store Connect API.
-# AINDA NÃO EXECUTADO: depende da conta paga. Ver docs/03-build-e-instalacao.md.
+# Ver docs/03-build-e-instalacao.md.
 #
-# Segredos: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_BASE64, APPLE_TEAM_ID
+# Segredos: ASC_KEY_ID, ASC_ISSUER_ID, APPLE_TEAM_ID e ASC_KEY_P8 (conteudo do
+# arquivo .p8) ou ASC_KEY_P8_BASE64 (o mesmo arquivo em base64)
 # Pré-requisito: o bundle id do projeto (ios/Runner.xcodeproj) deve ser o mesmo
 # do app criado no App Store Connect.
 
@@ -29,14 +30,20 @@ jobs:
 
       - name: Gravar a chave da API
         env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
         run: |
-          if [ -z "$ASC_KEY_P8_BASE64" ] || [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$APPLE_TEAM_ID" ]; then
+          if { [ -z "$ASC_KEY_P8" ] && [ -z "$ASC_KEY_P8_BASE64" ]; } || [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$APPLE_TEAM_ID" ]; then
             echo "::error::Faltam segredos. Ver docs/03-build-e-instalacao.md, Fase 2."
             exit 1
           fi
           mkdir -p "$RUNNER_TEMP/keys"
-          echo "$ASC_KEY_P8_BASE64" | base64 --decode > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
+          if [ -n "$ASC_KEY_P8" ]; then
+            printf '%s
+' "$ASC_KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
+          else
+            echo "$ASC_KEY_P8_BASE64" | base64 --decode > "$RUNNER_TEMP/keys/AuthKey_${ASC_KEY_ID}.p8"
+          fi
 
       - run: flutter pub get
 
